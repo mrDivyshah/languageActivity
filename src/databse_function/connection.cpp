@@ -7,19 +7,22 @@
 
 using namespace std;
 
-// Define the database file path
 #define USER_DATABASE getCurrentDirectory() + "/database/user.txt"
+#define STATUS_DATABASE getCurrentDirectory() + "/database/status.txt"
 
-// Structure to store user data
-struct User
-{
-    int id; // auto-increment ID
+struct User {
+    int id; 
     string joiningDate;
     string name;
     string password;
 };
+struct Status {
+    int id;
+    string timeStamp;
+    string name;
+    int level;
+};
 
-// Function to get the current date as a string
 string getCurrentDate()
 {
     time_t now = time(0);
@@ -29,7 +32,6 @@ string getCurrentDate()
     return date.str();
 }
 
-// Function to get the last ID from the file and auto-increment it
 int getNextUserId()
 {
     ifstream file(USER_DATABASE);
@@ -44,7 +46,6 @@ int getNextUserId()
     }
     return id + 1; // Increment ID for the new user
 }
-
 // Function to display all users
 void displayUsers()
 {
@@ -67,8 +68,6 @@ void displayUsers()
         cout << "Unable to open file.\n";
     }
 }
-
-
 
 bool userExists(const string &name)
 {
@@ -268,4 +267,23 @@ User searchUser(const string searchName)
         file.close();
     }
     return userData; 
+}
+
+Status addStatus(int id, string name, int level){
+    fstream file(STATUS_DATABASE, ios::app);
+    name.erase(0, name.find_first_not_of(' '));
+    Status statusData = {-1," "," ", -1 };
+    if (file.is_open()) {              
+        string Date = getCurrentDate(); 
+        file << id << "," << Date << "," << name << "," << level << endl;
+        file.close();
+        statusData.id = id;
+        statusData.timeStamp = Date;
+        statusData.name = name;
+        statusData.level = level;
+        return statusData;
+    } else {
+        cout << "Unable to open file.\n";
+    }
+    return statusData;
 }

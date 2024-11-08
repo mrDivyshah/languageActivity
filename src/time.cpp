@@ -2,6 +2,7 @@
 #include <ctime>
 #include <thread>  // For sleep_for()
 #include <chrono>  // For chrono::seconds
+#include <sstream> 
 
 using namespace std;
 
@@ -38,19 +39,17 @@ void liveTime(int row, int col) {
     }
 }
 
-string getTime()
-{
-    // Get current time
+string getTime() {
     time_t now = time(0);
-    tm *local_time = localtime(&now);
-
-    // Construct the date and time string using to_string() for integer to string conversion
-    string dateAndTime = to_string(local_time->tm_mday) + "-" +
-                         to_string(1 + local_time->tm_mon) + "-" +
-                         to_string(1900 + local_time->tm_year) + " " +
-                         to_string(local_time->tm_hour) + ":" +
-                         to_string(local_time->tm_min) + ":" +
-                         to_string(local_time->tm_sec);
-
-    return dateAndTime;
+    tm *ltm = localtime(&now);
+    
+    stringstream ss;
+    ss << 1900 + ltm->tm_year << "-" 
+       << 1 + ltm->tm_mon << "-" 
+       << ltm->tm_mday << " "
+       << 1 + ltm->tm_hour << ":"
+       << 1 + ltm->tm_min << ":"
+       << 1 + ltm->tm_sec;
+       
+    return ss.str();
 }
