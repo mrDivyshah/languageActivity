@@ -1,0 +1,2 @@
+1|dogs the|the dogs|1|A common pet|Can bark
+2|other the|the other|1|Opposite of same|Used for comparison

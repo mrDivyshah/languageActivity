@@ -99,4 +99,3 @@ using namespace std;
             {"integration", {"Combines systems", "Ensures compatibility", "Used in software development", "Facilitates communication", "Enhances functionality"}}
         }}
     };
-

@@ -14,6 +14,9 @@
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
 #include "src/game/WordScramble.cpp"
+//
+//#include "src/databse_function/s.cpp"
+
 struct Games
 {
     int index;
@@ -27,7 +30,7 @@ struct SelectionValue
 };
 
 vector<Games> gameList = {
-    {1, "Hangmen", "Hangman"},
+    {1, "sentence scramble", "sentencescramble"},
     {2, "Puzal Alfa", "Puzal"},
     {3, "Verb and Noun", "VerbNoun"},
     {4, "Word Scramble", "wordScramble"}};
@@ -47,10 +50,17 @@ void ScoreBoard();
 void time();
 void LoginUser();
 void Home(int rows, int columns, User userData);
+void runGame(int rows, int columns, User userData);
 void wordScramble(User userData, int rows, int columns);
 void printLine(char start, char mid, char end, int widths[], int numCols, char fill);
 void printCenteredText(const char *text, int width);
 void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlayScore, int columns, int rows);
+
+
+// main
+ 
+
+//main
 
 int main()
 {
@@ -717,6 +727,10 @@ void Home(int rows, int columns, User userData)
                 {
                     if (option.selected == game.index - 1)
                     {
+                    	if (game.index == 1)
+                        {
+                            runGame(rows, columns, userData);
+                        }
                         if (game.index == 4)
                         {
                             wordScramble(userData, rows, columns);
@@ -943,6 +957,476 @@ string stageArrayToString(int stage[])
     return ss.str();
 }
 
+
+
+//yagnesh
+struct User2 {
+    int userId;
+    string timestamp;
+    string modifyingTimestamp;
+    string name;
+    int level;
+    int score;
+    int coin;
+};
+
+struct ScrambledSentence {
+    int id;
+    string scrambled_sentence;
+    string correct_sentence;
+    int level;
+    vector<string> hints;
+};
+
+void runGame(int rows, int columns, User userData) {
+    const string userFileName = "sentence_game_users.txt";
+    vector<User2> users;
+    string line;
+    bool userFound = false;
+    User2 currentUser;
+
+    // Read user data from sentence_game_users.txt
+    ifstream userFile(userFileName);
+    if (userFile.is_open()) {
+        while (getline(userFile, line)) {
+            stringstream ss(line);
+            User2 user;
+
+            getline(ss, line, ','); user.userId = stoi(line);
+            getline(ss, line, ','); user.timestamp = line;
+            getline(ss, line, ','); user.modifyingTimestamp = line;
+            getline(ss, line, ','); user.name = line;
+            getline(ss, line, ','); user.level = stoi(line);
+            getline(ss, line, ','); user.score = stoi(line);
+            getline(ss, line, ','); user.coin = stoi(line);
+
+            if (user.userId == userData.id || user.name == userData.name) {
+                userFound = true;
+                currentUser = user;
+            }
+
+            users.push_back(user);
+        }
+        userFile.close();
+    }
+
+    // If the user doesn't exist, initialize their record
+    if (!userFound) {
+        currentUser.userId = userData.id;
+        currentUser.timestamp = "2024-01-01";  // Example timestamp, replace with current time
+        currentUser.modifyingTimestamp = "2024-01-01";
+        currentUser.name = userData.name;
+        currentUser.level = 1;  // Start at level 1
+        currentUser.score = 0;
+        currentUser.coin = 0;
+
+        users.push_back(currentUser);
+    }
+
+    // Read scrambled sentences from scramble_sen.txt
+    ifstream senFile("scramble_sen.txt");
+    vector<ScrambledSentence> sentences;
+
+    while (getline(senFile, line)) {
+        stringstream ss(line);
+        ScrambledSentence sen;
+        string hint;
+
+        getline(ss, line, '|'); sen.id = stoi(line);
+        getline(ss, line, '|'); sen.scrambled_sentence = line;
+        getline(ss, line, '|'); sen.correct_sentence = line;
+        getline(ss, line, '|'); sen.level = stoi(line);
+
+        while (getline(ss, hint, '|')) {
+            sen.hints.push_back(hint);
+        }
+
+        sentences.push_back(sen);
+    }
+    senFile.close();
+
+    // Game UI
+    int currentLevel = currentUser.level;
+    bool isPlaying = true;
+
+    while (isPlaying) {
+        system("cls");
+        ThemeFormate(rows, columns);
+        Header(rows, columns, GAME_NAME);
+
+        // Fetch sentence for the current level
+        auto it = find_if(sentences.begin(), sentences.end(),
+                          [currentLevel](const ScrambledSentence& s) { return s.level == currentLevel; });
+
+        if (it == sentences.end()) {
+            AlertMessage(rows, columns, "Error", "No sentences available for this level!");
+            break;
+        }
+
+        ScrambledSentence sen = *it;
+
+        // Display scrambled sentence
+        clearLines(rows / 2 - 2, rows / 2 + 2);
+        stringstream scrambledStream(sen.scrambled_sentence);
+        vector<string> scrambledElements;
+        string element;
+
+        while (scrambledStream >> element) {
+            scrambledElements.push_back(element);
+        }
+
+        random_shuffle(scrambledElements.begin(), scrambledElements.end());
+
+        cout << "\nScrambled Sentence: ";
+        for (const auto& e : scrambledElements) {
+            cout << e << " ";
+        }
+        cout << endl;
+
+        // Provide hints
+        cout << "\nHints: ";
+        for (const auto& hint : sen.hints) {
+            cout << hint << " ";
+        }
+        cout << endl;
+
+        // Ask user for the correct sentence
+        cout << "\nType your answer: ";
+        string userGuess;
+        getline(cin, userGuess);
+
+        // Validate the guess
+        if (userGuess == sen.correct_sentence) {
+            AlertMessage(rows, columns, "Success", "Correct answer!");
+            currentUser.score += 10;
+            currentUser.coin += 5;
+            currentUser.level++;
+        } else {
+            AlertMessage(rows, columns, "Failure", "Wrong answer!");
+            cout << "\nThe correct sentence was: " << sen.correct_sentence << endl;
+        }
+
+        // Prompt to continue or exit
+        int choice = menuSelectionPrint(rows, columns);
+        if (choice == 2) { // Assume 2 means exit in menuSelectionPrint
+            isPlaying = false;
+        }
+    }
+
+    // Save updated user data to sentence_game_users.txt
+    ofstream userOutFile(userFileName);
+    for (auto& user : users) {
+        if (user.userId == currentUser.userId) {
+            user = currentUser;
+        }
+        userOutFile << user.userId << ","
+                    << user.timestamp << ","
+                    << user.modifyingTimestamp << ","
+                    << user.name << ","
+                    << user.level << ","
+                    << user.score << ","
+                    << user.coin << endl;
+    }
+    userOutFile.close();
+
+    Footer(rows, columns, "Thank you for playing!");
+}
+
+//
+//void runGame(int rows, int columns, User userData) {
+//    const string userFileName = "sentence_game_users.txt";
+//    vector<User2> users;
+//    string line;
+//    bool userFound = false;
+//    User2 currentUser;
+//
+//    // Read user data
+//    ifstream userFile(userFileName);
+//    if (userFile.is_open()) {
+//        while (getline(userFile, line)) {
+//            stringstream ss(line);
+//            User2 user;
+//
+//            getline(ss, line, ','); user.userId = stoi(line);
+//            getline(ss, line, ','); user.timestamp = line;
+//            getline(ss, line, ','); user.modifyingTimestamp = line;
+//            getline(ss, line, ','); user.sentence = line;
+//            getline(ss, line, ','); user.level = stoi(line);
+//            getline(ss, line, ','); user.score = stoi(line);
+//            getline(ss, line, ','); user.coin = stoi(line);
+//
+//            if (user.userId == userData.id) {
+//                userFound = true;
+//                currentUser = user;
+//            }
+//
+//            users.push_back(user);
+//        }
+//        userFile.close();
+//    }
+//
+//    // Initialize new user data if not found
+//    if (!userFound) {
+//        currentUser.userId = userData.id;
+//        currentUser.timestamp = "2024-01-01";
+//        currentUser.modifyingTimestamp = "2024-01-01";
+//        currentUser.sentence = userData.name;
+//        currentUser.level = 1;
+//        currentUser.score = 0;
+//        currentUser.coin = 0;
+//
+//        users.push_back(currentUser);
+//    }
+//
+//    // Load sentences from file
+//    ifstream senFile("scramble_sen.txt");
+//    vector<ScrambledSentence> sentences;
+//    while (getline(senFile, line)) {
+//        stringstream ss(line);
+//        ScrambledSentence sen;
+//        string hint;
+//
+//        getline(ss, line, '|'); sen.id = stoi(line);
+//        getline(ss, line, '|'); sen.scrambled_sentence = line;
+//        getline(ss, line, '|'); sen.correct_sentence = line;
+//        getline(ss, line, '|'); sen.level = stoi(line);
+//
+//        while (getline(ss, hint, '|')) {
+//            sen.hints.push_back(hint);
+//        }
+//
+//        sentences.push_back(sen);
+//    }
+//    senFile.close();
+//
+//    // Gameplay loop
+//    int currentLevel = currentUser.level;
+//    bool isPlaying = true;
+//
+//    while (isPlaying) {
+//        system("cls"); // Clear the console
+//        ThemeFormate(rows, columns);
+//        Header(rows, columns, "Sentence Jumble");
+//
+//        // Fetch sentence for the current level
+//        auto it = find_if(sentences.begin(), sentences.end(),
+//                          [currentLevel](const ScrambledSentence& s) { return s.level == currentLevel; });
+//
+//        if (it == sentences.end()) {
+//            AlertMessage(rows, columns, "Error", "No sentences available for this level!");
+//            break;
+//        }
+//
+//        ScrambledSentence sen = *it;
+//
+//        // Display scrambled sentence
+//        clearLines(rows / 2 - 2, rows / 2 + 2);
+//        vector<string> scrambledWords;
+//        stringstream scrambledStream(sen.scrambled_sentence);
+//        string word;
+//
+//        while (scrambledStream >> word) {
+//            scrambledWords.push_back(word);
+//        }
+//
+//        random_shuffle(scrambledWords.begin(), scrambledWords.end());
+//
+//        // Display Scrambled Sentence
+//        printCenteredText("Scrambled Sentence:", columns);
+//        string scrambledOutput;
+//        for (const auto& w : scrambledWords) {
+//            scrambledOutput += w + " ";
+//        }
+//        printCenteredText(scrambledOutput.c_str(), columns);
+//
+//        // Display Hints
+//        printCenteredText("Hints:", columns);
+//        for (const auto& hint : sen.hints) {
+//            printCenteredText(hint.c_str(), columns);
+//        }
+//
+//        // User Input
+//        printCenteredText("Type your answer below:", columns);
+//        cout << "\n"; // Empty line for better UI
+//        string userGuess;
+//        getline(cin, userGuess);
+//
+//        // Validation
+//        if (userGuess == sen.correct_sentence) {
+//            AlertMessage(rows, columns, "Success", "Correct answer!");
+//            currentUser.score += 10;
+//            currentUser.coin += 5;
+//            currentUser.level++;
+//        } else {
+//            AlertMessage(rows, columns, "Failure", "Wrong answer!");
+//            string correctSentenceMessage = "Correct Sentence: " + sen.correct_sentence;
+//            printCenteredText(correctSentenceMessage.c_str(), columns);
+//        }
+//
+//        // Option to continue or exit
+//        Footer(rows, columns, "Do you want to continue?");
+//        int choice = menuSelectionPrint(rows, columns);
+//        if (choice == 2) { // Exit
+//            isPlaying = false;
+//        }
+//    }
+//
+//    // Save updated user data
+//    ofstream userOutFile(userFileName);
+//    for (auto& user : users) {
+//        if (user.userId == currentUser.userId) {
+//            user = currentUser;
+//        }
+//        userOutFile << user.userId << ","
+//                    << user.timestamp << ","
+//                    << user.modifyingTimestamp << ","
+//                    << user.sentence << ","
+//                    << user.level << ","
+//                    << user.score << ","
+//                    << user.coin << endl;
+//    }
+//    userOutFile.close();
+//
+//    Footer(rows, columns, "Thank you for playing!");
+//}
+
+//
+////yagnesh
+//struct User2 {
+//    int userId;
+//    string timestamp;
+//    string modifyingTimestamp;
+//    string sentence;
+//    int level;
+//    int score;
+//    int coin;
+//};
+//
+//struct ScrambledSentence {
+//    int id;
+//    string scrambled_sentence;
+//    string correct_sentence;
+//    int level;
+//    vector<string> hints;
+//};
+//
+//void runGame() {
+//    // Read user data from user.txt
+//    ifstream userFile("user.txt");
+//    vector<User2> users;
+//    string line;
+//
+//    while (getline(userFile, line)) {
+//        stringstream ss(line);
+//        User2 user;
+//        
+//        // Parse user information
+//        getline(ss, line, ','); user.userId = stoi(line);
+//        getline(ss, line, ','); user.timestamp = line;
+//        getline(ss, line, ','); user.modifyingTimestamp = line;
+//        getline(ss, line, ','); user.sentence = line;
+//        getline(ss, line, ','); user.level = stoi(line);
+//        getline(ss, line, ','); user.score = stoi(line);
+//        getline(ss, line, ','); user.coin = stoi(line);
+//        
+//        users.push_back(user);
+//    }
+//    userFile.close();
+//    
+//    // Read scrambled sentences data from scramble_sen.txt
+//    ifstream senFile("scramble_sen.txt");
+//    vector<ScrambledSentence> sentences;
+//    
+//    while (getline(senFile, line)) {
+//        stringstream ss(line);
+//        ScrambledSentence sen;
+//        string hint;
+//        
+//        // Parse scrambled sentence data
+//        getline(ss, line, '|'); sen.id = stoi(line);
+//        getline(ss, line, '|'); sen.scrambled_sentence = line;
+//        getline(ss, line, '|'); sen.correct_sentence = line;
+//        getline(ss, line, '|'); sen.level = stoi(line);
+//        
+//        // Parse hints
+//        while (getline(ss, hint, '|')) {
+//            sen.hints.push_back(hint);
+//        }
+//        
+//        sentences.push_back(sen);
+//    }
+//    senFile.close();
+//    
+//    // Run the game with sentences
+//    cout << "Welcome to the Sentence Jumble Game!" << endl;
+//    
+//    for (const auto& sen : sentences) {
+//        if (sen.level == 1) {
+//            // Split the scrambled sentence into elements
+//            stringstream scrambledStream(sen.scrambled_sentence);
+//            vector<string> scrambledElements;
+//            string element;
+//            
+//            while (scrambledStream >> element) {
+//                scrambledElements.push_back(element);
+//            }
+//
+//            // Shuffle the elements
+//            random_shuffle(scrambledElements.begin(), scrambledElements.end());
+//            
+//            // Display the scrambled sentence
+//            cout << "\nLevel " << sen.level << ": ";
+//            for (const auto& e : scrambledElements) {
+//                cout << e << " ";
+//            }
+//            cout << endl;
+//            
+//            // Provide hints
+//            cout << "Hints: ";
+//            for (const auto& h : sen.hints) {
+//                cout << h << " ";
+//            }
+//            cout << endl;
+//            
+//            // Ask for the correct sentence
+//            cout << "Rearrange the elements to form the correct sentence: ";
+//            string userGuess;
+//            getline(cin, userGuess);
+//            
+//            // Check if the user's guess matches the correct sentence
+//            if (userGuess == sen.correct_sentence) {
+//                cout << "Correct!" << endl;
+//                
+//                // Increase score and coin for the user
+//                for (auto& user : users) {
+//                    if (user.level == sen.level) {
+//                        user.score += 10;
+//                        user.coin += 5;
+//                        cout << "Your new score is: " << user.score << " and coins: " << user.coin << endl;
+//                    }
+//                }
+//            } else {
+//                cout << "Wrong! The correct sentence is: " << sen.correct_sentence << endl;
+//            }
+//        }
+//    }
+//    
+//    // Save updated user data back to user.txt
+//    ofstream userOutFile("user.txt");
+//    for (const auto& user : users) {
+//        userOutFile << user.userId << ","
+//                    << user.timestamp << ","
+//                    << user.modifyingTimestamp << ","
+//                    << user.sentence << ","
+//                    << user.level << ","
+//                    << user.score << ","
+//                    << user.coin << endl;
+//    }
+//    userOutFile.close();
+//}
+//
+
+
 void wordScramble(User userData, int rows, int columns)
 {
     map<int, vector<pair<string, vector<string>>>> words = vocabulary;
@@ -1081,6 +1565,7 @@ void wordScramble(User userData, int rows, int columns)
 
     //    cout << "Original: " << word << " | Shuffled: " << wordIntr << endl;
 }
+
 
 void printLine(char start, char mid, char end, int widths[], int numCols, char fill)
 {
