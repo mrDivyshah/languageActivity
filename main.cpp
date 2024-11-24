@@ -1,3 +1,11 @@
+// ########################################################
+// ##                       FAQ                          ##
+// ##  1.  How To Run This Game ?                        ##
+// ##  Ans: g++ main.cpp -o main -std=c++11 && main      ##
+// ##                                                    ##
+
+
+
 #include <stdlib.h>
 #include <windows.h>
 #include <string>
@@ -39,7 +47,7 @@ void ScoreBoard();
 void time();
 void LoginUser();
 void Home(int rows, int columns, User userData);
-void wordScramble(User userData);
+void wordScramble(User userData, int rows, int columns);
 void printLine(char start, char mid, char end, int widths[], int numCols, char fill);
 void printCenteredText(const char *text, int width);
 void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlayScore, int columns, int rows);
@@ -54,10 +62,12 @@ int main()
     do
     {
         consoleRowAndColumn(rows, columns);
-        if (columns < 204 && rows < 50)
+        if (columns < 120 && rows < 30)
         {
             system("cls");
-            cout << "Please Open Maximized terminal And Press Enter";
+            cout << "Please Open Maximized terminal And Press Enter" << endl;
+            cout << "Column Size is  : " << columns << "  We need minimum: 120" << endl;
+            cout << "Row Size is  : " << rows << "  We need minimum : 30" << endl;
             if (index != 0)
             {
                 cout << "\n\nAttempt : " << index;
@@ -73,13 +83,12 @@ int main()
     G_columns = columns;
     G_rows = rows;
     ThemeFormate(rows, columns);
-    moveCursorToPosition((columns - 65) / 2, 15);
+    moveCursorToPosition((columns - 65) / 2, (columns > 125 && rows > 35) ? 15 : 5);
     cout << Color_Blue;
     cout << "Hello! Get ready to play and improve your language skills!";
     cout << Color_Reset;
-    userData = LoginUser(((columns - 40) / 2), 18);
-    if (userData.id == -2)
-    {
+    userData = LoginUser(((columns - 40) / 2), (columns > 125 && rows > 35) ? 18 : 8);
+    if (userData.id == -2) {
         system("cls");
         return 0;
     }
@@ -208,7 +217,48 @@ User LoginUser(int columns, int rows)
         int selected = menuSelectionPrint(rows, columns + 5);
         if (selected == getUserCount() + 1)
         {
-            clearLines(rows, rows + getUserCount() + 7);
+
+            while (1)
+            {
+                clearLines(rows, rows + getUserCount() + 10);
+                moveCursorToPosition(columns - 5, rows);
+                cout << "Enter Your User Name : ";
+                moveCursorToPosition(columns + 18, rows);
+                getline(cin, userName);
+                moveCursorToPosition(columns, rows + 2);
+                cout << "Enter Password : ";
+                // moveCursorToPosition(columns + 19, rows);
+                getline(cin, password);
+                userData = searchUser(userName);
+                if (userData.id != -1 && userData.password == password)
+                {
+                    return userData;
+                }
+                else if (password.length() <= 6)
+                {
+                    moveCursorToPosition(columns - 20, rows + 6);
+                    cout << Color_Red;
+                    cout << "Your Password To Short Minimum length of Password is 6 Please Try Again....";
+                    cout << Color_Reset;
+                    _getch();
+                    clearLines(rows + 2, rows + 7);
+                }
+                else if (userData.id != -1)
+                {
+                    AlertMessage(rows + 9, columns + 20, "Error", "Invalid Password");
+                    clearLines(rows + 2, rows + 7);
+                }
+                else
+                {
+                    AlertMessage(rows + 9, columns + 20, "Error", "Invalid Credentials");
+                    clearLines(rows + 2, rows + 7);
+                }
+            }
+            clearLines(rows + 2, rows + 7);
+        }
+        else if (selected == getUserCount() + 2)
+        {
+            clearLines(rows, rows + getUserCount() + 10);
             moveCursorToPosition(columns, rows);
             cout << "Enter Your Name : ";
             moveCursorToPosition(columns + 18, rows);
@@ -288,7 +338,7 @@ User LoginUser(int columns, int rows)
                 }
             }
         }
-        else if (selected == getUserCount() + 2)
+        else if (selected == getUserCount() + 3)
         {
             userData = {-2, " ", " "};
             return userData;
@@ -298,7 +348,7 @@ User LoginUser(int columns, int rows)
             userData = userDataUsingUserIndex(selected);
             while (1)
             {
-                clearLines(rows, rows + getUserCount() + 7);
+                clearLines(rows, rows + getUserCount() + 10);
                 moveCursorToPosition(columns, rows);
                 cout << "Enter Your Password : ";
                 moveCursorToPosition(columns + 23, rows);
@@ -341,15 +391,19 @@ void printMenu(int selected, int rows, int columns)
         index++;
     }
     moveCursorToPosition(columns - 22, rows + index + 1);
-    cout << (selected == index ? Color_Green : "") << "-------------------------------------------------------------------------";
+    cout << (selected == index ? Color_Yellow : "") << "-------------------------------------------------------------------------";
     moveCursorToPosition(columns + 6, rows + index + 2);
-    cout << (selected == index ? Color_Green + "-> " : "   ") << "New User" << Color_Reset << "\n";
+    cout << (selected == index ? Color_Yellow + "-> " : "   ") << "Login Me" << Color_Reset << "\n";
     moveCursorToPosition(columns - 22, rows + index + 3);
-    cout << (selected == index + 1 ? Color_Red : "") << (selected == index ? Color_Green : "") << "-------------------------------------------------------------------------" << Color_Reset;
-    moveCursorToPosition(columns + 8, rows + index + 4);
-    cout << (selected == index + 1 ? Color_Red + "-> " : "   ") << "EXIT" << Color_Reset;
+    cout << (selected == index + 1 ? Color_Green : "") << (selected == index ? Color_Yellow : "") << "-------------------------------------------------------------------------" << Color_Reset;
+    moveCursorToPosition(columns + 6, rows + index + 4);
+    cout << (selected == index + 1 ? Color_Green + "-> " : "   ") << "New User" << Color_Reset << "\n";
     moveCursorToPosition(columns - 22, rows + index + 5);
-    cout << (selected == index + 1 ? Color_Red : "") << "-------------------------------------------------------------------------\n"
+    cout << (selected == index + 2 ? Color_Red : "") << (selected == index + 1 ? Color_Green : "") << "-------------------------------------------------------------------------" << Color_Reset;
+    moveCursorToPosition(columns + 8, rows + index + 6);
+    cout << (selected == index + 2 ? Color_Red + "-> " : "   ") << "EXIT" << Color_Reset;
+    moveCursorToPosition(columns - 22, rows + index + 7);
+    cout << (selected == index + 2 ? Color_Red : "") << "-------------------------------------------------------------------------\n"
          << Color_Reset;
 }
 
@@ -359,7 +413,7 @@ int menuSelectionPrint(int rows, int columns)
     printMenu(selected, rows, columns);
     while (true)
     {
-        SelectionValue option = Selection(selected, getUserCount() + 1);
+        SelectionValue option = Selection(selected, getUserCount() + 2);
         if (option.enterPressed)
         {
             break;
@@ -413,8 +467,11 @@ void ThemeFormate(int rows, int columns)
     system("cls");
     Header(rows, columns, GAME_NAME);
     moveCursorToPosition(0, rows - 3);
-    Footer(rows, columns, "Use Arrow <Up> and <Down> Key For Manu Navigation, Use <Enter Key> For Select a Option, Remove Aleart Box using <Enter Key>.");
-    BoldTitle(columns, cardColumn, 5);
+    Footer(rows, columns, "Use Arrow <Up> and <Down> Key For Navigation, Use <Enter Key> For Select or Remove Aleart Box.");
+    if (columns > 125 && rows > 35)
+    {
+        BoldTitle(columns, cardColumn, 5);
+    }
 }
 
 void UserHeader(string content, int column, int minusLength, bool isFooterAvail, string leftContent, string rightContent)
@@ -425,7 +482,7 @@ void UserHeader(string content, int column, int minusLength, bool isFooterAvail,
     int boxHeight = 7;
 
     int startColumn = (column - boxWidth) / 2;
-    int startRow = 13;
+    int startRow = (G_columns > 125 && G_rows > 35) ? 13 : 4;
     clearLines(startRow, 7);
 
     moveCursorToPosition(startColumn, startRow);
@@ -471,29 +528,29 @@ int levelSelection(int rows, int columns, int numLevels, int restrictedFromLevel
 {
     int selected = 0;        // Start with the first level selected
     const int boxWidth = 42; // Width of the selection box
-
+    int row = (columns > 125 && rows > 35) ? 20 : 10;
     while (true)
     {
         // Clear screen (this is a placeholder; replace with your clear function if available)
         clearLines(19, 24 + numLevels * 2);
 
         // Draw top border of the selection box
-        moveCursorToPosition((columns - boxWidth) / 2, 20);
+        moveCursorToPosition((columns - boxWidth) / 2, row);
         cout << "+";
         for (int i = 0; i < boxWidth - 2; i++)
             cout << "-";
         cout << "+";
 
         // Draw the title row
-        moveCursorToPosition((columns - boxWidth) / 2, 21);
+        moveCursorToPosition((columns - boxWidth) / 2, row + 1);
         cout << "|";
-        moveCursorToPosition((columns - 12) / 2, 21);
+        moveCursorToPosition((columns - 12) / 2, row + 1);
         cout << "Select Level";
-        moveCursorToPosition((columns + boxWidth - 2) / 2, 21);
+        moveCursorToPosition((columns + boxWidth - 2) / 2, row + 1);
         cout << "|";
 
         // Draw separator line after title
-        moveCursorToPosition((columns - boxWidth) / 2, 22);
+        moveCursorToPosition((columns - boxWidth) / 2, row + 2);
         cout << "+";
         for (int i = 0; i < boxWidth - 2; i++)
             cout << "-";
@@ -504,8 +561,8 @@ int levelSelection(int rows, int columns, int numLevels, int restrictedFromLevel
         for (i = 0; i < numLevels; i++)
         {
             // Draw the level rows
-            moveCursorToPosition((columns - boxWidth) / 2, 23 + i); // Adjusted row for spacing
-            cout << "|";                                            // Start of the box for this level
+            moveCursorToPosition((columns - boxWidth) / 2, row + 3 + i); // Adjusted row for spacing
+            cout << "|";                                                 // Start of the box for this level
 
             // If the level is restricted, display in black, else in green for selected
             if (i >= restrictedFromLevel) // Restricted level starts from level 3
@@ -528,18 +585,18 @@ int levelSelection(int rows, int columns, int numLevels, int restrictedFromLevel
             }
 
             // End of the box for this level
-            moveCursorToPosition((columns + boxWidth - 3) / 2, 23 + i);
+            moveCursorToPosition((columns + boxWidth - 2) / 2, row + 3 + i);
             cout << "|";
         }
 
         // Draw bottom border
-        moveCursorToPosition((columns - boxWidth) / 2, 23 + i);
+        moveCursorToPosition((columns - boxWidth) / 2, row + 3 + i);
         cout << "+";
         for (int j = 0; j < boxWidth - 2; j++)
             cout << "-";
         cout << "+";
 
-        moveCursorToPosition((columns - 33) / 2, 24 + i + 1); // Centered footer
+        moveCursorToPosition((columns - 33) / 2, row + 4 + i + 1); // Centered footer
         cout << Color_Blue + "Press Enter to select the level" + Color_Reset;
 
         // Handle user input (Arrow keys and Enter)
@@ -580,67 +637,63 @@ int levelSelection(int rows, int columns, int numLevels, int restrictedFromLevel
 int HomerMenu(int rows, int columns, int selected)
 {
     int box_column = 42;
-    moveCursorToPosition((columns - 43) / 2, 20);
+    int row = (G_columns > 125 && G_rows > 35) ? 20 : 11;
+    moveCursorToPosition((columns - 43) / 2, row);
     cout << "+";
     for (int i = 0; i <= box_column - 2; i++)
         cout << "-";
     cout << "+";
     // cout << "+-----------------------------------------+";
-    moveCursorToPosition((columns - 43) / 2, 21);
+    moveCursorToPosition((columns - 43) / 2, row + 1);
     cout << "|";
-    moveCursorToPosition((columns - 39) / 2, 21);
+    moveCursorToPosition((columns - 39) / 2, row + 1);
     cout << "[-] Select Game";
-    moveCursorToPosition((columns + 42) / 2, 21);
+    moveCursorToPosition((columns + 41) / 2, row + 1);
     cout << "|";
-    moveCursorToPosition((columns - 43) / 2, 22);
+    moveCursorToPosition((columns - 43) / 2, row + 2);
     cout << "+-----------------------------------------+";
     // Games Here Show
     int count = 0;
     for (const auto &DSgame : gameList)
     {
-        moveCursorToPosition((columns - 43) / 2, 23 + count);
+        moveCursorToPosition((columns - 43) / 2, row + 3 + count);
         cout << "|";
-        moveCursorToPosition((columns - 34) / 2, 23 + count);
+        moveCursorToPosition((columns - 34) / 2, row + 3 + count);
         cout << (selected == count ? Color_Green + ">> " : Color_Bright_Black + "   ") << DSgame.name << Color_Reset;
-        moveCursorToPosition((columns + 42) / 2, 23 + count);
+        moveCursorToPosition((columns + 41) / 2, row + 3 + count);
         cout << "|";
         count++;
     }
-    moveCursorToPosition((columns - 43) / 2, 22 + count + 1);
+    moveCursorToPosition((columns - 43) / 2, row + 3 + count);
     cout << "+-----------------------------------------+";
-    moveCursorToPosition((columns - 43) / 2, 23 + count + 1);
+    moveCursorToPosition((columns - 43) / 2, row + 3 + count + 1);
     cout << "|";
-    moveCursorToPosition((columns - 20) / 2, 23 + count + 1);
+    moveCursorToPosition((columns - 20) / 2, row + 3 + count + 1);
     cout << (selected == count ? Color_Yellow + ">> " : "   ") << "Manage Account" << Color_Reset;
-    moveCursorToPosition((columns + 42) / 2, 23 + count + 1);
+    moveCursorToPosition((columns + 41) / 2, row + 3 + count + 1);
     cout << "|";
-    moveCursorToPosition((columns - 43) / 2, 24 + count + 1);
+    moveCursorToPosition((columns - 43) / 2, row + 4 + count + 1);
     cout << "+-----------------------------------------+";
-    moveCursorToPosition((columns - 43) / 2, 25 + count + 1);
+    moveCursorToPosition((columns - 43) / 2, row + 5 + count + 1);
     cout << "|";
-    moveCursorToPosition((columns - 10) / 2, 25 + count + 1);
+    moveCursorToPosition((columns - 10) / 2, row + 5 + count + 1);
     cout << (selected == count + 1 ? Color_Red + ">> " : "   ") << "Exit" << Color_Reset;
-    moveCursorToPosition((columns + 42) / 2, 25 + count + 1);
+    moveCursorToPosition((columns + 41) / 2, row + 5 + count + 1);
     cout << "|";
-    moveCursorToPosition((columns - 42) / 2, 26 + count + 1);
+    moveCursorToPosition((columns - 43) / 2, row + 6 + count + 1);
     cout << "+-----------------------------------------+";
     return 0;
 }
 
 void Home(int rows, int columns, User userData)
 {
-    ThemeFormate(rows, columns);
+    ThemeFormate(G_rows, G_columns);
     int gameListSize = gameList.size();
     struct HomeMenu
     {
         int index;
         string MenuItem;
     };
-
-    // Up Arrow: 72
-    // Down Arrow: 80
-    // Right Arrow: 77
-    // Left Arrow: 75
     int selected = 0;
     HomerMenu(rows, columns, selected);
     while (true)
@@ -666,7 +719,7 @@ void Home(int rows, int columns, User userData)
                     {
                         if (game.index == 4)
                         {
-                            wordScramble(userData);
+                            wordScramble(userData, rows, columns);
                         }
                     }
                     clearLines(13, rows - 10);
@@ -745,7 +798,7 @@ int hintButtons(int row)
     int firstColumn = G_columns / 8;            // Updated for 4 buttons
     int secondColumn = 3 * (G_columns / 8) - 6; // Adjusted column spacing
     int thirdColumn = 5 * (G_columns / 8) - 9;
-    int fourthColumn = 7 * (G_columns / 8) - 12; // New fourth button
+    int fourthColumn = 7 * (G_columns / 8) - 12; // fourth button
 
     int currentSelection = 0; // 0 -> Hint, 1 -> Retry, 2 -> Exit, 3 -> Help
 
@@ -843,7 +896,7 @@ int hintButtons(int row)
 
         // Footer instructions
         string footer = "Use Side Arrow Keys to Navigate Buttons";
-        moveCursorToPosition((G_columns - footer.length()) / 2, row + 6);
+        moveCursorToPosition((G_columns - footer.length()) / 2, row + 4);
         cout << Color_Green << footer << Color_Reset;
 
         // Wait for user input
@@ -890,21 +943,21 @@ string stageArrayToString(int stage[])
     return ss.str();
 }
 
-void wordScramble(User userData)
+void wordScramble(User userData, int rows, int columns)
 {
-    int rows = G_rows;
-    int columns = G_columns;
     map<int, vector<pair<string, vector<string>>>> words = vocabulary;
     srand(static_cast<unsigned int>(time(0)));
+    int mrows = rows;
     while (true)
     {
+        rows = mrows;
         int stage[3] = {-1, -1, -1};
         int sele = -1;
-        clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
+        system("cls");
         ThemeFormate(rows, columns);
         WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
         int level = levelSelection(rows, columns, 5, WordScrambleUserData.level);
-        clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
+        system("cls");
         ThemeFormate(rows, columns);
         auto entry = words[level];
         int totalWords = words[level].size();
@@ -912,6 +965,7 @@ void wordScramble(User userData)
         int itretion = 0;
         int hintCount = 0;
         int stg = 0;
+        rows = rows / 2;
         while (sele <= 3)
         {
             for (const auto &entry : words[level])
@@ -923,30 +977,32 @@ void wordScramble(User userData)
                     while (1)
                     {
                         WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
-                        clearLines(rows - 32, rows - 10);
+                        clearLines(rows - 10, rows + 11);
                         UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Word Scramble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
-                        moveCursorToPosition((columns - (wordIntr.length() * 2) - wordIntr.length()) / 2, rows - 32);
-                        for (const auto &latter : wordIntr) {
+                        moveCursorToPosition((columns - (wordIntr.length() * 2) - wordIntr.length()) / 2, rows - 4);
+                        for (const auto &latter : wordIntr)
+                        {
                             cout << "  " << static_cast<char>(toupper(latter));
                         }
                         string trueWord = entry.first;
                         string userWord;
-                        if (sele == 0) {
+                        if (sele == 0)
+                        {
                             updateWordScrambleData(userData.id, userData.name, WordScrambleUserData.level, WordScrambleUserData.score, WordScrambleUserData.coin - 1);
                             string hint = entry.second[hintCount++ % 5];
-                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 30);
+                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 2);
                             cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
                         }
-                        moveCursorToPosition((columns - (40)) / 2, rows - 28);
+                        moveCursorToPosition((columns - (40)) / 2, rows);
                         cout << "Type Your Word Here : ";
                         getline(cin, userWord);
                         if (toLower(userWord) == trueWord)
                         {
-                            moveCursorToPosition((columns - 22) / 2, rows - 25);
+                            moveCursorToPosition((columns - 22) / 2, rows + 2);
                             cout << Color_Bright_Green << "+---------------------+";
-                            moveCursorToPosition((columns - 22) / 2, rows - 24);
+                            moveCursorToPosition((columns - 22) / 2, rows + 3);
                             cout << "|  Great You Are Win  |";
-                            moveCursorToPosition((columns - 22) / 2, rows - 23);
+                            moveCursorToPosition((columns - 22) / 2, rows + 4);
                             cout << "+---------------------+" << Color_Reset;
                             moveCursorToPosition(columns, rows - 22);
                             if (hintCount != 0)
@@ -965,19 +1021,20 @@ void wordScramble(User userData)
                         }
                         else
                         {
-                            moveCursorToPosition((columns - 35) / 2, rows - 25);
+                            moveCursorToPosition((columns - 35) / 2, rows + 2);
                             cout << Color_Bright_Red << "+--------------------------------+";
-                            moveCursorToPosition((columns - 35) / 2, rows - 24);
+                            moveCursorToPosition((columns - 35) / 2, rows + 3);
                             cout << "|  Wrong Word! Please Try Again  |";
-                            moveCursorToPosition((columns - 35) / 2, rows - 23);
+                            moveCursorToPosition((columns - 35) / 2, rows + 4);
                             cout << "+--------------------------------+" << Color_Reset;
-                            sele = hintButtons(34);
+                            sele = hintButtons(rows + 6);
                             if (sele == 1)
                             {
                                 continue;
                             }
                             else if (sele == 2)
                             {
+                                system("cls");
                                 return;
                             }
                             else if (sele == 3)
@@ -1006,7 +1063,7 @@ void wordScramble(User userData)
                     currentPlayScore += stage[i];
                 }
                 updateWordScrambleData(userData.id, userData.name, (level == WordScrambleUserData.level) ? WordScrambleUserData.level + 1 : WordScrambleUserData.level, WordScrambleUserData.score + currentPlayScore, (currentPlayScore == 30) ? WordScrambleUserData.coin + 1 : WordScrambleUserData.coin);
-                ScoreBoard(gameName, level, WordScrambleUserData.score, currentPlayScore, G_columns, G_rows);
+                ScoreBoard(gameName, level, WordScrambleUserData.score, currentPlayScore, columns, rows);
                 level++;
                 _getch();
                 break;
@@ -1082,8 +1139,8 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
 
     // Calculate starting position to center the scoreboard
     int startColumn = (screenWidth - totalWidth) / 2;
-    int startRow = screenHeight - 18; // Assuming 8 rows for the scoreboard height
-
+    int startRow = screenHeight + 8; // Assuming 8 rows for the scoreboard height
+    clearLines(startRow, startRow + 8);
     // Clear the area and move cursor to starting position
     cout << Color_Bright_White;
     moveCursorToPosition(startColumn, startRow - 2);
