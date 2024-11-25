@@ -46,6 +46,7 @@ int getNextUserId()
     }
     return id + 1; // Increment ID for the new user
 }
+
 // Function to display all users
 void displayUsers()
 {
@@ -68,6 +69,7 @@ void displayUsers()
         cout << "Unable to open file.\n";
     }
 }
+
 
 bool validateUser(const string &name, const string &password)
 {
@@ -100,6 +102,7 @@ bool validateUser(const string &name, const string &password)
 
     return false; // No matching user or incorrect password
 }
+
 
 bool userExists(const string &name)
 {
