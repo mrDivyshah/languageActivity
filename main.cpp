@@ -25,7 +25,7 @@ struct SelectionValue
 };
 
 vector<Games> gameList = {
-    {1, "Hangmen", "Hangman"},
+    {1, "Sentence Scramble", "Hangman"},
     {2, "Puzal Alfa", "Puzal"},
     {3, "Verb and Noun", "VerbNoun"},
     {4, "Word Scramble", "wordScramble"}};
@@ -996,6 +996,7 @@ void wordScramble(User userData, int rows, int columns)
                             string hint = entry.second[hintCount++ % 5];
                             moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 2);
                             cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
+                            sele = -1;
                         }
                         moveCursorToPosition((columns - (40)) / 2, rows);
                         cout << "Type Your Word Here : ";
