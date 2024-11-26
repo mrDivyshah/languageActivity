@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.ejs": "html",
+    "xstring": "cpp",
+    "iostream": "cpp",
+    "thread": "cpp",
+    "iosfwd": "cpp",
+    "string": "cpp",
+    "ostream": "cpp",
+    "vector": "cpp",
+    "format": "cpp",
+    "map": "cpp"
+  }
+}
