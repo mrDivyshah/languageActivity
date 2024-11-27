@@ -64,56 +64,32 @@ int getNextUserId()
     return id + 1; // Increment ID for the new user
 }
 
-
-
- // For stringstream
-
+// Function to display all users
 void displayUsers()
 {
     fstream file(USER_DATABASE, ios::in);
-    string line;
+    int id;
+    string joiningDate, name;
 
     if (file.is_open())
     {
-        cout << CYAN << "\n+------------+--------------------+--------------------+" << RESET << "\n";
-        cout << CYAN << "| " << BOLD << setw(10) << "ID" << RESET
-             << CYAN << " | " << BOLD << setw(18) << "Name" << RESET
-             << CYAN << " | " << BOLD << setw(18) << "Joining Date" << RESET << CYAN << " |" << "\n";
-        cout << CYAN << "+------------+--------------------+--------------------+" << RESET << "\n";
+        cout << CYAN << "\nUsers in the database:" << RESET << "\n";
+        cout << string(50, '-') << "\n";
+        cout << BOLD << setw(10) << "ID" << setw(20) << "Name" << setw(20) << "Joining Date\n"
+             << RESET;
+        cout << string(50, '-') << "\n";
 
-        bool hasUsers = false;
-
-        while (getline(file, line))
+        while (file >> id >> joiningDate >> name)
         {
-            hasUsers = true;
-
-            stringstream ss(line);
-            string id, name, joiningDate;
-
-            // Split by comma
-            getline(ss, id, ',');
-            getline(ss, name, ',');
-            getline(ss, joiningDate, ',');
-
-            // Display data
-            cout << CYAN << "| " << RESET << setw(10) << id
-                 << CYAN << " | " << RESET << setw(18) << name
-                 << CYAN << " | " << RESET << setw(18) << joiningDate
-                 << CYAN << " |" << RESET << "\n";
+            cout << setw(10) << id << setw(20) << name << setw(20) << joiningDate << "\n";
         }
-
-        if (!hasUsers)
-        {
-            cout << CYAN << "| " << RESET << setw(52) << "No users found!" << CYAN << " |" << RESET << "\n";
-        }
-
-        cout << CYAN << "+------------+--------------------+--------------------+" << RESET << "\n";
-
         file.close();
+        cout << string(50, '-') << "\n";
     }
     else
     {
-        cout << RED << "Unable to open file.\n" << RESET;
+        cout << RED << "Unable to open file.\n"
+             << RESET;
     }
 }
 
@@ -424,3 +400,4 @@ int main()
     adminPanel();
     return 0;
 }
+
