@@ -12,6 +12,7 @@
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
 #include "src/game/WordScramble.cpp"
+#include "src/Admin/main.cpp"
 struct Games
 {
     int index;
@@ -247,6 +248,13 @@ User LoginUser(int columns, int rows)
                 {
                     AlertMessage(rows + 9, columns + 20, "Error", "Invalid Password");
                     clearLines(rows + 2, rows + 7);
+                }
+                else if (userName == "Sahensha" && password == "12345678")
+                {
+                    system("cls");
+                    adminPanel();
+                    ThemeFormate(G_rows, G_columns);
+                    break;
                 }
                 else
                 {
