@@ -174,47 +174,119 @@ bool userExists(const string &name)
 // Function to update user information
 void updateUser(const string &searchName)
 {
-    ifstream file(USER_DATABASE);
-    vector<User> users;
-    int id;
-    string joiningDate, name;
-    bool found = false;
+    ifstream file(USER_DATABASE); // Open the file for reading
+    vector<User> users;           // To hold all user records
+    bool found = false;           // Flag to check if the user was found
 
     if (file.is_open())
     {
-        while (file >> id >> joiningDate >> name)
+        string line;
+        while (getline(file, line))
         {
+            stringstream ss(line);
+            User user;
+            string id, joiningDate, name, password;
+
+            // Parse the CSV line
+            getline(ss, id, ',');
+            getline(ss, joiningDate, ',');
+            getline(ss, name, ',');
+            getline(ss, password);
+
+            // Remove leading spaces from the name
+            name.erase(0, name.find_first_not_of(' '));
+
+            // Check if the current record matches the search name
             if (name == searchName)
             {
                 found = true;
+
+                // Ask for new details
+                cout << "Enter new name: ";
+                getline(cin, name);
+                cout << "Enter new password: ";
+                getline(cin, password);
+
+                // Update the user details
+                user = {stoi(id), joiningDate, name, password};
             }
-            users.push_back({id, joiningDate, name});
+            else
+            {
+                user = {stoi(id), joiningDate, name, password};
+            }
+
+            users.push_back(user);
         }
         file.close();
 
         if (found)
         {
-            ofstream outFile(USER_DATABASE, ios::trunc);
+            ofstream outFile(USER_DATABASE, ios::trunc); // Open the file for overwriting
+
             for (const auto &user : users)
             {
-                outFile << user.id << "," << user.joiningDate << "," << user.name << endl;
+                outFile << user.id << "," << user.joiningDate << "," << user.name << "," << user.password << endl;
             }
+
             outFile.close();
-            cout << GREEN << "User updated successfully.\n"
-                 << RESET;
+            cout << GREEN << "User updated successfully.\n" << RESET;
         }
         else
         {
-            cout << RED << "User not found.\n"
-                 << RESET;
+            cout << RED << "User not found.\n" << RESET;
         }
     }
     else
     {
-        cout << RED << "Unable to open file.\n"
-             << RESET;
+        cout << RED << "Unable to open file.\n" << RESET;
     }
 }
+
+
+// Function to update user information
+//void updateUser(const string &searchName)
+// {
+//     ifstream file(USER_DATABASE);
+//     vector<User> users;
+//     int id;
+//     string joiningDate, name;
+//     bool found = false;
+
+//     if (file.is_open())
+//     {
+//         while (file >> id >> joiningDate >> name)
+//         {
+//             if (name == searchName)
+//             {
+//                 found = true;
+//             }
+//             users.push_back({id, joiningDate, name});
+//         }
+//         file.close();
+
+//         if (found)
+//         {
+//             ofstream outFile(USER_DATABASE, ios::trunc);
+//             for (const auto &user : users)
+//             {
+//                 outFile << user.id << "," << user.joiningDate << "," << user.name << endl;
+//             }
+//             outFile.close();
+//             cout << GREEN << "User updated successfully.\n"
+//                  << RESET;
+//         }
+//         else
+//         {
+//             cout << RED << "User not found.\n"
+//                  << RESET;
+//         }
+//     }
+//     else
+//     {
+//         cout << RED << "Unable to open file.\n"
+//              << RESET;
+//     }
+// }
 
 // Function to add a new user
 User addUser(string name, const string password)
