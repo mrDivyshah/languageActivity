@@ -101,16 +101,62 @@ void printUserDetailsBox(const User &user)
 
 void displayMenu()
 {
-    cout << Color_Blue << "\n=== Admin Panel Of WordWise ===\n"
+    // Define menu items
+    string title = "Admin Panel Of WordWise";
+    string menuItems[] = {
+        "1. Display All Users",
+        "2. Display All Word Scramble Users",
+        "3. Update User",
+        "4. Search User",
+        "5. Exit"};
+    size_t menuCount = sizeof(menuItems) / sizeof(menuItems[0]); // Total number of menu items
+    // Determine the width of the table based on the longest item
+    size_t maxWidth = title.length();
+    for (const string &item : menuItems)
+    {
+        maxWidth = max(maxWidth, item.length());
+    }
+    maxWidth += 4;                      // Add padding for aesthetics
+    size_t tableHeight = 2 + 1 + menuCount + 1; // Header, divider, items, bottom border
+
+    // Get console dimensions
+    int rows, columns;
+    consoleRowAndColumn(rows, columns);
+
+    // Calculate starting position for centering
+    int startRow = (rows - tableHeight - 10) / 2;
+    int startColumn = (columns - (maxWidth + 4)) / 2;
+
+    // Print the table at the center
+    moveCursorToPosition(startColumn, startRow);
+    cout << Color_Blue << string(maxWidth + 4, '=') << "\n";
+    moveCursorToPosition(startColumn, startRow + 1);
+    cout << "| " << Color_White << setw(maxWidth) << left << title << Color_Blue << " |\n";
+    moveCursorToPosition(startColumn, startRow + 2);
+    cout << string(maxWidth + 4, '=') << "\n";
+
+    // Print the menu items with pipe-separated indices
+    
+    for (size_t i = 0; i < menuCount; i++) // Use `menuCount` as the limit
+    {
+        moveCursorToPosition(startColumn, startRow + 3 + i);
+        string index = to_string(i + 1); // Get the menu index as a string
+        cout << "| "
+            << setw(3) << left << index
+            << "| " << Color_Yellow
+            << setw(maxWidth - 4) << left << menuItems[i].substr(3) // Skip the "1. ", "2. ", etc.
+            << Color_Blue
+            << "|\n";
+    }
+    moveCursorToPosition(startColumn, startRow + menuCount + 3);
+    cout << string(maxWidth + 4, '-') << "\n"
          << Color_Reset;
-    cout << Color_Yellow;
-    cout << "1. Display All Users\n";
-    cout << "2. Update User\n";
-    cout << "3. Search User\n";
-    cout << "4. Exit\n"
-         << Color_Reset;
+
+    // Prompt for user input
+    moveCursorToPosition(startColumn, startRow + menuCount + 4);
     cout << Color_Green << "Enter your choice: " << Color_Reset;
 }
+
 void adminPanel()
 {
     while (true)
@@ -126,17 +172,23 @@ void adminPanel()
         }
         else if (choice == 2)
         {
+            cout << "\n\n";
+            displayDataAsTable(getWordScrambleData());
+        }
+        else if (choice == 3)
+        {
             string name;
             cout << "Enter the name of the user to update: ";
             getline(cin, name);
             updateUser(name);
         }
-        else if (choice == 3)
+        else if (choice == 4)
         {
             string name;
             cout << "Enter the name of the user to search: ";
             getline(cin, name);
             User user = searchUser(name);
+
             if (user.id != -1)
             {
                 printUserDetailsBox(user);
@@ -147,7 +199,7 @@ void adminPanel()
                      << Color_Reset;
             }
         }
-        else if (choice == 4)
+        else if (choice == 5)
         {
             cout << Color_Green << "Exiting admin panel...\n"
                  << Color_Reset;
@@ -159,7 +211,10 @@ void adminPanel()
         {
             cout << Color_Red << "Invalid choice. Please try again.\n"
                  << Color_Reset;
+            _getch();
             break;
         }
+        _getch();
+        system("cls");
     }
 }

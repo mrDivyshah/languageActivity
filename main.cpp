@@ -27,9 +27,9 @@ struct SelectionValue
 
 vector<Games> gameList = {
     {1, "Sentence Scramble", "Hangman"},
-    {2, "Puzal Alfa", "Puzal"},
-    {3, "Verb and Noun", "VerbNoun"},
-    {4, "Word Scramble", "wordScramble"}};
+    // {2, "Puzal Alfa", "Puzal"},
+    // {3, "Verb and Noun", "VerbNoun"},
+    {2, "Word Scramble", "wordScramble"}};
 
 int G_columns, G_rows;
 string GAME_NAME = "~: WORDWISE :~";
@@ -720,7 +720,7 @@ void Home(int rows, int columns, User userData)
             }
             else if (option.selected == gameListSize + 1)
             {
-                cout << "this is Exit";
+                system("cls");
                 return;
             }
             else
