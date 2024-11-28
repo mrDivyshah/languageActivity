@@ -249,7 +249,7 @@ User LoginUser(int columns, int rows)
                     AlertMessage(rows + 9, columns + 20, "Error", "Invalid Password");
                     clearLines(rows + 2, rows + 7);
                 }
-                else if (userName == "Sahensha" && password == "12345678")
+                else if (userName == "Samrat" && password == "12345678")
                 {
                     system("cls");
                     adminPanel();
@@ -397,6 +397,10 @@ void printMenu(int selected, int rows, int columns)
         moveCursorToPosition(columns + 9 - (user.length() / 2), rows + index);
         cout << (selected == index ? Color_Cyan + "-> " + Color_Underline_On : "   ") << user << Color_Reset + Color_Underline_Off << "\n";
         index++;
+        if (index == 5)
+        {
+            break;
+        }
     }
     moveCursorToPosition(columns - 22, rows + index + 1);
     cout << (selected == index ? Color_Yellow : "") << "-------------------------------------------------------------------------";
@@ -1234,150 +1238,6 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
     moveCursorToPosition(startColumn, startRow + 6);
     printLine('+', '+', '+', widths, numCols, '=');
     cout << Color_Reset;
-}
-
-string shuffleSentence(const string &sentence)
-{
-    vector<string> words;
-    stringstream ss(sentence);
-    string word;
-
-    // Split sentence into words
-    while (ss >> word)
-    {
-        words.push_back(word);
-    }
-
-    // Shuffle the words
-    random_shuffle(words.begin(), words.end());
-
-    // Join shuffled words back into a sentence
-    string shuffled;
-    for (const auto &w : words)
-    {
-        shuffled += w + " ";
-    }
-
-    // Remove trailing space
-    if (!shuffled.empty())
-    {
-        shuffled.pop_back();
-    }
-    return shuffled;
-}
-bool validateSentence(const string &userInput, const string &original)
-{
-    return userInput == original;
-}
-
-void sentenceScramble(User userData)
-{
-    int rows = G_rows;
-    int columns = G_columns;
-
-    // Example sentence map
-    map<int, vector<pair<string, vector<string>>>> Sentences = {
-        {1, {{"The quick brown fox jumps over the lazy dog", {"Animal", "Quick", "Lazy", "Brown"}}, {"A journey of a thousand miles begins with a single step", {"Journey", "Miles", "Step", "Begin"}}}},
-        {2, {{"To be or not to be that is the question", {"Philosophy", "Hamlet", "Question", "To be"}}}}};
-
-    srand(static_cast<unsigned int>(time(0)));
-
-    while (true)
-    {
-        int stage[3] = {-1, -1, -1};
-        int sele = -1;
-        clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
-        ThemeFormate(rows, columns);
-
-        WordScrambleData userDataScramble = getSingleUserWordScrambleData(userData.id, userData.name);
-        int level = 1; // Replace with level selection logic
-        clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows);
-        ThemeFormate(rows, columns);
-
-        auto entries = Sentences[level];
-        int totalSentences = entries.size();
-        int randomIndex = rand() % totalSentences;
-        int iteration = 0;
-        int hintCount = 0;
-        int stg = 0;
-        rows = rows / 2;
-        while (sele <= 3)
-        {
-            for (const auto &entry : entries)
-            {
-                if (iteration == randomIndex)
-                {
-                    string originalSentence = entry.first;
-                    string scrambledSentence = shuffleSentence(originalSentence);
-                    while (1)
-                    {
-                        clearLines(rows - 32, rows);
-                        UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Scramble :::  " + Color_Yellow + " Score : [" + to_string(userDataScramble.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : TODO", "Coin : " + to_string(userDataScramble.coin));
-                        moveCursorToPosition((columns - (scrambledSentence.length() * 2) - scrambledSentence.length()) / 2, rows - 32);
-                        cout << scrambledSentence;
-
-                        string userInput;
-                        if (sele == 0)
-                        {
-                            updateWordScrambleData(userData.id, userData.name, userDataScramble.level, userDataScramble.score, userDataScramble.coin - 1);
-                            string hint = entry.second[hintCount++ % 5];
-                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 30);
-                            cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
-                        }
-                        moveCursorToPosition((columns - (40)) / 2, rows - 28);
-                        cout << "Type Your Sentence Here : ";
-                        getline(cin, userInput);
-
-                        if (validateSentence(userInput, originalSentence))
-                        {
-                            moveCursorToPosition((columns - 22) / 2, rows - 25);
-                            cout << Color_Bright_Green << "+---------------------+";
-                            moveCursorToPosition((columns - 22) / 2, rows - 24);
-                            cout << "|  Great You Are Win  |";
-                            moveCursorToPosition((columns - 22) / 2, rows - 23);
-                            cout << "+---------------------+" << Color_Reset;
-                            stg++;
-                            break;
-                        }
-                        else
-                        {
-                            moveCursorToPosition((columns - 35) / 2, rows - 25);
-                            cout << Color_Bright_Red << "+--------------------------------+";
-                            moveCursorToPosition((columns - 35) / 2, rows - 24);
-                            cout << "|  Wrong Sentence! Try Again!   |";
-                            moveCursorToPosition((columns - 35) / 2, rows - 23);
-                            cout << "+--------------------------------+" << Color_Reset;
-                            sele = hintButtons(34);
-                            if (sele == 1)
-                            {
-                                continue;
-                            }
-                            else if (sele == 2 || sele == 3)
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    if (stg >= 3 || sele == 3)
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    iteration++;
-                }
-            }
-            if (stg >= 3)
-            {
-                break;
-            }
-            else
-            {
-                iteration = 0;
-            }
-        }
-    }
 }
 
 // void verbOrNoun(int rows, int columns, User userData) {
