@@ -316,7 +316,7 @@ Status addStatus(int id, string name, int level)
 // Menu display
 void displayMenu()
 {
-    cout << BOLD << BLUE << "\n=== Admin Panel ===\n"
+    cout << BOLD << BLUE << "\n=== Admin Panel Of WordWise ===\n"
          << RESET;
     cout << YELLOW << "1. Add User\n";
     cout << "2. Display All Users\n";
@@ -331,16 +331,14 @@ void displayMenu()
 // Admin Panel Logic
 void adminPanel()
 {
-    int choice;
-    do
+    while (true)
     {
+        int choice;
         displayMenu();
         cin >> choice;
         cin.ignore();
 
-        switch (choice)
-        {
-        case 1:
+        if (choice == 1)
         {
             string name, password;
             cout << "Enter user name: ";
@@ -362,20 +360,22 @@ void adminPanel()
                          << RESET;
                 }
             }
-            break;
+            
         }
-        case 2:
+        else if (choice == 2)
+        {
             displayUsers();
-            break;
-        case 3:
+            
+        }
+        else if (choice == 3)
         {
             string name;
             cout << "Enter the name of the user to update: ";
             getline(cin, name);
             updateUser(name);
-            break;
+            
         }
-        case 4:
+        else if (choice == 4)
         {
             int id, level;
             string name;
@@ -388,9 +388,9 @@ void adminPanel()
             cin >> level;
 
             addStatus(id, name, level);
-            break;
+            
         }
-        case 5:
+        else if (choice == 5)
         {
             string name;
             cout << "Enter the name of the user to search: ";
@@ -405,18 +405,26 @@ void adminPanel()
                 cout << RED << "User not found.\n"
                      << RESET;
             }
-            break;
+            
         }
-        case 6:
-            cout << GREEN << "Exiting admin panel...\n"
+        else if (choice == 6)
+        {
+                 cout << GREEN << "Exiting admin panel...\n"
                  << RESET;
-            break;
-        default:
-            cout << RED << "Invalid choice. Please try again.\n"
-                 << RESET;
+                break;
         }
-    } while (choice != 6);
-}
+           
+        else
+        {
+                cout << RED << "Invalid choice. Please try again.\n"
+                 << RESET;
+                 break;
+        }
+            
+
+        }
+    } 
+
 
 // Main Function
 int main()
