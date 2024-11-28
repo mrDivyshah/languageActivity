@@ -1091,7 +1091,8 @@ void sen(User userData, int rows, int columns)
     map<int, vector<pair<string, vector<string>>>> sentences = loadVocabulary(filename);
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
-//    	unordered_set<string> processedSentences; 
+   
+
     while (true)
     {
         rows = mrows;
@@ -1115,35 +1116,68 @@ void sen(User userData, int rows, int columns)
         {
             for (const auto &entry : sentences[level])
             {
-            	
+            
+                const int MAX_SENTENCES = 10; // Maximum capacity for the array
+                int in[MAX_SENTENCES];         // Array to store used random indices
+                int inSize = 0;                // Current size of the `in` array
+
+					
                 if (iteration == randomIndex)
                 {
                 	
-           		 
-                   
-
                     
-                    
-                    
-					
-					
+						
                     while (1)
                     {
-                    	 string sentence = entry.first;
-                    	 string jumbledSentence = shuffleSentence(sentence); // Shuffle at the word level
-				 
-//                	    while(toLower(jumbledSentence) == toLower(sentence)){
-//                    	 string jumbledSentence = shuffleSentence(sentence);
-//					    }
-//           		   
-//				    processedSentences.insert(sentence);
+                       
+                        bool abc = true;  
+                        string sentence = entry.first;
+                        string jumbledSentence;
+
+                        while (abc) {
+                             
+                            do {
+                                jumbledSentence = shuffleSentence(sentence);
+                            } while (toLower(jumbledSentence) == toLower(sentence));
+
+                            // Check if the index is already used
+                            bool indexUsed = false;
+                            for (int i = 0; i < inSize; i++) {
+                                if (in[i] == randomIndex) {
+                                    indexUsed = true;
+                                    break;
+                                }
+                            }
+
+                            if (indexUsed) {
+                                // If the index is already used, generate a new one
+                                randomIndex = rand() % totalSentences;
+                            } else {
+                                // If the index is unique, add it to the array
+                                if (inSize < MAX_SENTENCES) {
+                                    in[inSize++] = randomIndex;
+                                }
+                                abc = false;  
+                            }
+                        }
+
+                    	
+
+
+
+
+
 
                         WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
                         clearLines(rows - 10, rows + 11);
                         UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
                         // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length()) / 2, rows - 4);
-                        moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length())/1, rows - 2);
-                        cout << jumbledSentence;
+                        // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length())/1.7, rows - 2);
+                        // center_Text(jumbledSentence, rows);
+                        int charCount = jumbledSentence.length();
+moveCursorToPosition((columns - charCount) / 2, rows -2);
+
+                         cout << jumbledSentence;
 
 						
                         string trueSentence = entry.first;
@@ -1152,8 +1186,9 @@ void sen(User userData, int rows, int columns)
                         {
                             updateWordScrambleData(userData.id, userData.name, WordScrambleUserData.level, WordScrambleUserData.score, WordScrambleUserData.coin - 1);
                             string hint = entry.second[hintCount++ % entry.second.size()];
-                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 2);
+                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows + 6);
                             cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
+
                         }
 
                         moveCursorToPosition((columns - 40) / 2, rows);
@@ -1169,7 +1204,7 @@ void sen(User userData, int rows, int columns)
                             moveCursorToPosition((columns - 22) / 2, rows + 4);
                             cout << "+---------------------+" << Color_Reset;
                             moveCursorToPosition(columns, rows - 22);
-
+                             sele = -1;
                             stage[stg++] = hintCount != 0 ? 5 : 10;
                             break;
                         }
@@ -1243,6 +1278,8 @@ void printLine(char start, char mid, char end, int widths[], int numCols, char f
     }
     printf("\n");
 }
+
+
 
 void printCenteredText(const char *text, int width)
 {
