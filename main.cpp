@@ -249,7 +249,7 @@ User LoginUser(int columns, int rows)
                     AlertMessage(rows + 9, columns + 20, "Error", "Invalid Password");
                     clearLines(rows + 2, rows + 7);
                 }
-                else if (userName == "Samrat" && password == "12345678")
+                else if (userName == "admin" && password == "admin123")
                 {
                     system("cls");
                     adminPanel();
