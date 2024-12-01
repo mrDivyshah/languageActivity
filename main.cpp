@@ -7,10 +7,13 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <string>
+#include <random>
 #include <conio.h>
 #include "src/headding.cpp" // nameSpace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
+#include "src/databse_function/SenScramble.cpp"
+
 #include "src/game/WordScramble.cpp"
 #include "src/Admin/main.cpp"
 struct Games
@@ -26,10 +29,10 @@ struct SelectionValue
 };
 
 vector<Games> gameList = {
-    {1, "Sentence Scramble", "Hangman"},
-    // {2, "Puzal Alfa", "Puzal"},
-    // {3, "Verb and Noun", "VerbNoun"},
-    {2, "Word Scramble", "wordScramble"}};
+    {1, "Sentence Scramble", "sen"},
+    {2, "Fill in the blanks", "fillinthe"},
+    {3, "Fill in the blanks", "VerbNoun"},
+    {4, "Word Scramble", "wordScramble"}};
 
 int G_columns, G_rows;
 string GAME_NAME = "~: WORDWISE :~";
@@ -51,6 +54,7 @@ void printLine(char start, char mid, char end, int widths[], int numCols, char f
 void printCenteredText(const char *text, int width);
 void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlayScore, int columns, int rows);
 void sen(User userData, int rows, int columns);
+void fillinthe(User userData, int rows, int columns);
 
 int main()
 {
@@ -336,7 +340,11 @@ User LoginUser(int columns, int rows)
                     moveCursorToPosition(columns - 13, rows + 10);
                     cout << "Ready for more? Tap < Enter Key > to keep moving forward....";
                     userData = addUser(userName, password);
+
+                    // login with user game
                     addWordScrambleData(userData.id, userData.name, 1, 0, 10);
+
+
                     _getch();
                     return userData;
                 }
@@ -736,6 +744,10 @@ void Home(int rows, int columns, User userData)
                         else if (game.index == 4)
                         {
                             wordScramble(userData, rows, columns);
+                        }
+                        else if (game.index == 3)
+                        {
+                            // fillinthe(userData, rows, columns);
                         }
                     }
                     clearLines(13, rows - 10);
@@ -1240,25 +1252,35 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
     cout << Color_Reset;
 }
 
-string shuffleSentence(const string &sentence)
-{
+string shuffleSentence(const string &sentence) {
     vector<string> words;
     string word;
+    string result;
+
     istringstream stream(sentence);
-    while (stream >> word)
-    {
+    while (stream >> word) {
         words.push_back(word);
     }
 
-    random_shuffle(words.begin(), words.end());
+    vector<string> originalWords = words; 
+
+    do {
+        shuffle(words.begin(), words.end(), default_random_engine(rand()));
+    } while (words == originalWords); 
+
     stringstream shuffledSentence;
-    for (const auto &w : words)
-    {
+    for (const auto &w : words) {
         shuffledSentence << w << " ";
     }
 
-    return shuffledSentence.str();
+    result = shuffledSentence.str();
+    if (!result.empty() && result.back() == ' ') {
+        result.pop_back();
+    }
+
+    return result;
 }
+
 
 map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &filename)
 {
@@ -1280,6 +1302,8 @@ map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &file
         // Split the line by comma
         if (getline(ss, levelStr, ',') && getline(ss, sentence, ',') && getline(ss, hint1, ',') && getline(ss, hint2, ','))
         {
+
+            
             int level = stoi(levelStr); // Convert level to integer
             vector<string> hints = {hint1, hint2};
             vocabulary[level].emplace_back(sentence, hints);
@@ -1318,14 +1342,16 @@ void sen(User userData, int rows, int columns)
 
         while (sele <= 3)
         {
+         
             for (const auto &entry : sentences[level])
             {
-
+                
+                if (iteration == randomIndex)
+                {  
                 const int MAX_SENTENCES = 10; // Maximum capacity for the array
                 int in[MAX_SENTENCES];        // Array to store used random indices
-                int inSize = 0;               // Current size of the in array
-                if (iteration == randomIndex)
-                {
+                int inSize = 0;              
+
                     while (1)
                     {
 
@@ -1459,6 +1485,197 @@ void sen(User userData, int rows, int columns)
         }
     }
 }
+
+
+map<int, vector<pair<string, vector<string>>>> loadfillintheblanks(const string &filename)
+{
+    map<int, vector<pair<string, vector<string>>>> vocabulary;
+    ifstream file(filename);
+
+    if (!file.is_open())
+    {
+        cerr << "Error: Unable to open file " << filename << endl;
+        return vocabulary;
+    }
+
+    string line;
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string levelStr, question, op1, op2, op3, op4, answer, hint;
+        vector<string> hints;
+        
+        // Read level and question
+        if (getline(ss, levelStr, ',') && getline(ss, question, ','))
+        {
+            // Read options and answer
+            if (getline(ss, op1, ',') && getline(ss, op2, ',') &&
+                getline(ss, op3, ',') && getline(ss, op4, ',') && 
+                getline(ss, answer, ','))
+            {
+                // Collect hints dynamically
+                while (getline(ss, hint, ','))
+                {
+                    hints.push_back(hint);
+                }
+
+                int level = stoi(levelStr); // Convert level to integer
+                vocabulary[level].emplace_back(question + " (" + op1 + ", " + op2 + ", " + op3 + ", " + op4 + ")", answer);
+            }
+        }
+    }
+
+    file.close();
+    return vocabulary;
+}
+
+
+void fillinthe(User userData, int rows, int columns) {
+    string filename = "./src/game/gra.txt";
+    map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks(filename);
+
+    srand(static_cast<unsigned int>(time(0))); // Seed random generator
+    int mrows = rows;
+
+    while (true) {
+        rows = mrows;
+        int stage[3] = {-1, -1, -1};
+        int sele = -1;
+        system("cls");
+
+        ThemeFormate(rows, columns);
+        WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
+        int level = levelSelection(rows, columns, 5, WordScrambleUserData.level);
+        system("cls");
+        ThemeFormate(rows, columns);
+
+        auto entry = sentences[level];
+        int totalSentences = sentences[level].size();
+        int randomIndex = rand() % totalSentences;
+
+        int iteration = 0;
+        int hintCount = 0;
+        int stg = 0;
+        rows = rows / 2;
+
+        while (sele <= 3) {
+            for (const auto& entry : sentences[level]) {
+                if (iteration == randomIndex) {
+                    const int MAX_SENTENCES = 10;
+                    int in[MAX_SENTENCES];
+                    int inSize = 0;
+
+                    while (1) {
+                        bool isCorrect = true;
+                        string sentence = entry.first;
+
+                        while (isCorrect) {
+                            WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
+                            clearLines(rows - 10, rows + 11);
+
+                            UserHeader("Level: " + to_string(level) + Color_Bright_Red +
+                                       "   :::  Fill in the Blanks :::  " + Color_Yellow +
+                                       " Score : [" + to_string(WordScrambleUserData.score) + "] ", 
+                                       columns, Color_Bright_Red.length() + Color_Yellow.length(), true, 
+                                       "Stage : " + stageArrayToString(stage), 
+                                       "Coin : " + to_string(WordScrambleUserData.coin));
+
+                            string sentenceWithOptions = entry.first;
+                            moveCursorToPosition((columns - sentenceWithOptions.length()) / 2, rows - 4);
+                            cout << sentenceWithOptions;
+
+                            string trueSentence = entry.first; 
+                            cout << trueSentence;
+                             // The correct answer is the first element in the hints vector
+                            string userSentence;
+
+                            if (sele == 0) {
+                                updateWordScrambleData(userData.id, userData.name, WordScrambleUserData.level, 
+                                                        WordScrambleUserData.score, WordScrambleUserData.coin - 1);
+                                string hint = entry.second[hintCount++ % entry.second.size()];
+                                moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 2);
+                                cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
+                            }
+
+                            moveCursorToPosition((columns - 40) / 2, rows);
+                            cout << "Type Your Sentence Here: ";
+                            getline(cin, userSentence);
+
+                            if (toLower(userSentence) == toLower(trueSentence)) {
+                                moveCursorToPosition((columns - 22) / 2, rows + 2);
+                                cout << Color_Bright_Green << "+---------------------+";
+                                moveCursorToPosition((columns - 22) / 2, rows + 3);
+                                cout << "|  Great! You Win!   |";
+                                moveCursorToPosition((columns - 22) / 2, rows + 4);
+                                cout << "+---------------------+" << Color_Reset;
+                                moveCursorToPosition(columns, rows - 22);
+                                sele = -1;
+                                stage[stg++] = hintCount != 0 ? 5 : 10;
+                                break;
+                            } else {
+                                moveCursorToPosition((columns - 35) / 2, rows + 2);
+                                cout << Color_Bright_Red << "+--------------------------------+";
+                                moveCursorToPosition((columns - 35) / 2, rows + 3);
+                                cout << "|  Wrong Sentence! Try Again!   |";
+                                moveCursorToPosition((columns - 35) / 2, rows + 4);
+                                cout << "+--------------------------------+" << Color_Reset;
+                                sele = hintButtons(rows + 6);
+
+                                if (sele == 1)
+                                    continue;
+                                else if (sele == 2) {
+                                    system("cls");
+                                    return;
+                                } else if (sele == 3)
+                                    break;
+                            }
+                        }
+
+                        if (stg >= 3 || sele == 3)
+                            break;
+                    }
+
+                    if (stg >= 3)
+                        break;
+                } else {
+                    iteration++;
+                }
+            }
+
+            if (stg >= 3) {
+                UserHeader("Level: " + to_string(level) + Color_Bright_Red +
+                           "   :::  Fill in the Blanks :::  " + Color_Yellow +
+                           " Score : [" + to_string(WordScrambleUserData.score) + "] ", 
+                           columns, Color_Bright_Red.length() + Color_Yellow.length(), true, 
+                           "Stage : " + stageArrayToString(stage), 
+                           "Coin : " + to_string(WordScrambleUserData.coin));
+
+                char gameName[50] = "Fill in the Blanks";
+                int currentPlayScore = 0;
+                for (int i = 0; i < 3; ++i) {
+                    currentPlayScore += stage[i];
+                }
+                updateWordScrambleData(userData.id, userData.name, 
+                                        (level == WordScrambleUserData.level) ? WordScrambleUserData.level + 1 : WordScrambleUserData.level, 
+                                        WordScrambleUserData.score + currentPlayScore, 
+                                        (currentPlayScore == 30) ? WordScrambleUserData.coin + 1 : WordScrambleUserData.coin);
+
+                ScoreBoard(gameName, level, WordScrambleUserData.score, currentPlayScore, columns, rows);
+                level++;
+                _getch();
+                break;
+            } else {
+                iteration = 0;
+            }
+
+            if (sele == 3)
+                break;
+        }
+    }
+}
+
+
+
 // void verbOrNoun(int rows, int columns, User userData) {
 //     clearScreen();
 //     drawHeader("Verb or Noun Game");

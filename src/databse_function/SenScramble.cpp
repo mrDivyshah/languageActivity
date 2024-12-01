@@ -1,16 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <ctime>
-#include <iomanip>
-#include <algorithm>
-#include "../time.cpp"
-#include "../colors.cpp"
 
-using namespace std;
 
-#define SenScramble "../../database/sentenceUser.txt"
+
+#define SenScramble getCurrentDirectory() + "/database/sentenceUser.txt"
+// #define SenScramble "../../database/sentenceUser.txt"
 // #define SenScramble "D:/cpp project/languageActivity/database/WordScramble.txt"
 
 struct SenScrambleData {
