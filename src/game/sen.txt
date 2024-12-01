@@ -7,7 +7,6 @@
 1,Sun gives light,Start with 'Sun',End with 'light'.
 1,Earth is round,Start with 'Earth',End with 'round'.
 1,Books teach us,Start with 'Books',End with 'us'.
-1,Clouds bring rain,Start with 'Clouds',End with 'rain'.
 2,Fruits are very healthy,Start with 'Fruits',End with 'healthy'.
 2,Exercise maintains physical health,Start with 'Exercise',End with 'health'.
 2,Reading books enhances knowledge,Start with 'Reading',End with 'knowledge'.
