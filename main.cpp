@@ -1301,7 +1301,7 @@ map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &file
 
 void sen(User userData, int rows, int columns)
 {
-    string filename = "./src/game/sen.txt";
+    string filename = "./src/game/sen.txt";           
     map<int, vector<pair<string, vector<string>>>> sentences = loadVocabulary(filename);
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;

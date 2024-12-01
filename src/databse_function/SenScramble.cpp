@@ -10,7 +10,8 @@
 
 using namespace std;
 
-#define SenScramble "../../database/sentenceUser.txt"
+#define SenScramble getCurrentDirectory() + "/database/sentenceUser.txt"
+// #define SenScramble "D:/cpp project/languageActivity/database/sentenceUser.txt"
 // #define SenScramble "D:/cpp project/languageActivity/database/WordScramble.txt"
 
 struct SenScrambleData {
