@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <string>
 #include <conio.h>
+#include <random>
 #include "src/headding.cpp" // nameSpace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
@@ -1240,24 +1241,33 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
     cout << Color_Reset;
 }
 
-string shuffleSentence(const string &sentence)
-{
+// Shuffle Words Code started -----------+++++++++++++---------
+
+string shuffleSentence(const string &sentence) {
     vector<string> words;
     string word;
     istringstream stream(sentence);
-    while (stream >> word)
-    {
+    while (stream >> word) {
         words.push_back(word);
     }
 
-    random_shuffle(words.begin(), words.end());
+    vector<string> originalWords = words; 
+
+    do {
+        shuffle(words.begin(), words.end(), default_random_engine(rand()));
+    } while (words == originalWords); 
+
     stringstream shuffledSentence;
-    for (const auto &w : words)
-    {
+    for (const auto &w : words) {
         shuffledSentence << w << " ";
     }
 
-    return shuffledSentence.str();
+    string result = shuffledSentence.str();
+    if (!result.empty() && result.back() == ' ') {
+        result.pop_back();
+    }
+
+    return result;
 }
 
 map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &filename)
@@ -1277,7 +1287,6 @@ map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &file
         stringstream ss(line);
         string levelStr, sentence, hint1, hint2;
 
-        // Split the line by comma
         if (getline(ss, levelStr, ',') && getline(ss, sentence, ',') && getline(ss, hint1, ',') && getline(ss, hint2, ','))
         {
             int level = stoi(levelStr); // Convert level to integer
