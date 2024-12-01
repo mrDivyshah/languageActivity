@@ -733,7 +733,7 @@ void Home(int rows, int columns, User userData)
                         {
                             sen(userData, rows, columns);
                         }
-                        else if (game.index == 4)
+                        else if (game.index == 2)
                         {
                             wordScramble(userData, rows, columns);
                         }
