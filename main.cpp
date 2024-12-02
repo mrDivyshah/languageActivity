@@ -867,6 +867,7 @@ int hintButtons(int row)
             cout << "-----------";
         }
 
+
         // Button 3: Exit
         moveCursorToPosition(thirdColumn, row);
         if (currentSelection == 2)
