@@ -1,0 +1,3 @@
+1,Identify the tense in "He is running.",Present Continuous,Tense,Focus on "is running",Present tense with "is",Action currently happening,Present Continuous,Past Simple,Future Perfect
+2,What is the plural of "child"?,Children,Plural,Irregular plural,Look for irregular words,"child" becomes "children",Children,Childs,Childrens
+3,Fill in the blank: "She ___ to the market." (past tense),went,Tense,Past action,Verb form of "go",Example: "He went home",Went,Go,Goes
