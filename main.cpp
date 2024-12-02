@@ -1668,28 +1668,30 @@ void fill(User userData, int rows, int columns)
         int iteration = 0;
         int hintCount = 0;
         int stg = 0;
-         int trys = 0;
+         int attp = 0;
         rows = rows / 2;
  
           
         while (sele <= 3)
         {
-            
          
             for (const auto &entry : sentences[level])
             {
                 
                 if (iteration == randomIndex)
                 {  
-                
-                    
+              
                     while (1)
                     {
 
                         
                         string sentence = entry.first;
-                        
-                      
+                         
+                       bool isRunning = true;
+           
+
+                while (isRunning)
+                             {
                        
                         FillintheData FillintheUserData = getSingleUserFillintheData(userData.id, userData.name);
                         clearLines(rows - 10, rows + 11);
@@ -1732,30 +1734,36 @@ void fill(User userData, int rows, int columns)
                             stage[stg++] = hintCount != 0 ? 5 : 10;
                             break;
                         }
+                       else
+                     
+                        {
+                              // Incorrect answer
+                        attp++; // Increment attempt count
+                        if (attp == 2)
+                        {
+                            moveCursorToPosition((columns - 35) / 2, rows + 2);
+                            cout << Color_Bright_Red << "+--------------------------------+";
+                            moveCursorToPosition((columns - 35) / 2, rows + 3);
+                 cout << "|  Wrong Sentence! Try Again!     " << "Trys :" + to_string(attp) + "   |";
+                        
+                            moveCursorToPosition((columns - 35) / 2, rows + 4);
+                            cout << "+--------------------------------+" << Color_Reset;
+                            sele = 3; // Force exit
+                            isRunning = false; // End loop
+                            break;
+                        }
                         else
                         {
 
-                             
+                            moveCursorToPosition((columns - 35) / 2, rows + 2);
+                            cout << Color_Bright_Red << "+--------------------------------+";
+                            moveCursorToPosition((columns - 35) / 2, rows + 3);
+                              cout << "|  Wrong Sentence! Try Again!     " << "Trys :" + to_string(attp) + "   |";
                         
-//                              if(trys <= 1)   {
-//         trys++;
-//    }
-// else {
-                              
-//                                 system("cls");
-//                                     return;
-//                             }
-                                            
+                            moveCursorToPosition((columns - 35) / 2, rows + 4);
+                            cout << "+--------------------------------+" << Color_Reset;
 
-                          
-                            moveCursorToPosition((columns - 40) / 2, rows + 2);
-                            cout << Color_Bright_Red << "+-------------------------------------------+";
-                            moveCursorToPosition((columns - 40) / 2, rows + 3);
-                            cout << "|  Wrong Sentence! Try Again!     " << "Trys :" + to_string(trys) + "   |";
-                        
-                            moveCursorToPosition((columns - 40) / 2, rows + 4);
-                            cout << "+-------------------------------------------+" << Color_Reset;
-                            sele = hintButtonsforfil(rows + 6);
+                            sele = hintButtons(rows + 6);
                             if (sele == 0)
                                 continue;
                             else if (sele == 1)
@@ -1765,20 +1773,21 @@ void fill(User userData, int rows, int columns)
                             }
                             else if (sele == 2)
                                 break;
-                            
-                            
+
+
+
                         }
-
-                    }   
-
-                    if (stg >= 3 || sele == 3)
-                        break;
+                    }
                 }
-                else
-                {
-                    iteration++;
-                }
+                if (!isRunning) break; // Exit loop if game ends
             }
+        }
+        else
+        {
+            iteration++;
+        }
+            }
+
 
             if (stg >= 3)
             {
