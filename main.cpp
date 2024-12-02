@@ -1497,8 +1497,8 @@ void sen(User userData, int rows, int columns)
     }
 }
 
-map<int, vector<pair<string, string>>> loadfillintheblanks(const string &filename) {
-    map<int, vector<pair<string, string>>> vocabulary;
+map<int, vector<pair<string, vector<string>>>> loadfillintheblanks(const string &filename) {
+    map<int, vector<pair<string, vector<string>>>> vocabulary;
     ifstream file(filename);
 
     if (!file.is_open()) {
@@ -1519,7 +1519,8 @@ map<int, vector<pair<string, string>>> loadfillintheblanks(const string &filenam
             
             int level = stoi(levelStr); // Convert level to integer
             string formattedQuestion = question + " (" + op1 + ", " + op2 + ", " + op3 + ", " + op4 + ")";
-            vocabulary[level].emplace_back(formattedQuestion, answer);
+           vector<string> options = {answer, op1, op2, op3, op4};
+           vocabulary[level].emplace_back(formattedQuestion, options);
         }
     }
 
@@ -1640,12 +1641,84 @@ int hintButtonsforfil(int row)
     }
 }
 
+string buttons(int row, int columns, const vector<string> &buttonLabels)
+{
+    const int LEFT_ARROW = 75;
+    const int RIGHT_ARROW = 77;
+    const int ENTER_KEY = 13;
+
+    int buttonCount = buttonLabels.size();
+    if (buttonCount < 3 || buttonCount > 4)
+    {
+        throw invalid_argument("Button count must be 3 or 4.");
+    }
+
+    int currentSelection = 0;
+
+    while (true)
+    {
+        // Clear previous buttons
+        for (int i = 0; i < buttonCount; ++i)
+        {
+            moveCursorToPosition(0, row + i * 3);
+            cout << string(columns, ' ');
+        }
+
+        // Draw buttons dynamically
+        for (int i = 0; i < buttonCount; ++i)
+        {
+            int buttonWidth = 12;
+            int buttonSpacing = columns / (buttonCount + 1);
+            int buttonX = buttonSpacing * (i + 1) - buttonWidth / 2;
+
+            // Draw top border
+            moveCursorToPosition(buttonX, row);
+            cout << (currentSelection == i ? "***********" : "-----------");
+
+            // Draw label
+            moveCursorToPosition(buttonX, row + 1);
+            cout << "| " << buttonLabels[i] << " |";
+
+            // Draw bottom border
+            moveCursorToPosition(buttonX, row + 2);
+            cout << (currentSelection == i ? "***********" : "-----------");
+        }
+
+        // Footer instructions
+        string footer = "Use Left/Right Arrow Keys to Navigate, Enter to Select";
+        moveCursorToPosition((columns - footer.length()) / 2, row + 4);
+        cout << footer;
+
+        // Wait for user input
+        int key = _getch();
+
+        // Arrow key handling
+        if (key == 224)
+        {
+            key = _getch(); // Get the actual key code
+            if (key == LEFT_ARROW)
+            {
+                currentSelection = (currentSelection - 1 + buttonCount) % buttonCount;
+            }
+            else if (key == RIGHT_ARROW)
+            {
+                currentSelection = (currentSelection + 1) % buttonCount;
+            }
+        }
+
+        // Enter key to confirm selection
+        if (key == ENTER_KEY)
+        {
+            return buttonLabels[currentSelection];
+        }
+    }
+}
 
 
 void fill(User userData, int rows, int columns)
 {
     string filename = "./src/game/gra.txt";
-    map<int, vector<pair<string, string>>> sentences = loadfillintheblanks(filename);
+    map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks(filename);
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
 
@@ -1706,7 +1779,12 @@ void fill(User userData, int rows, int columns)
                         moveCursorToPosition((columns - charCount) / 2, rows - 4);
 
                         cout << sentence;
-                        string trueSentence = entry.second;
+                        string trueSentence = entry.second[0];
+                           std::string str[4];  
+                        str[0] = entry.second[1];
+                        str[1] = entry.second[2];
+                        str[2] = entry.second[3];
+                        str[3] = entry.second[4];
                         string userSentence;
                         // if (sele == 0)
                         // {
@@ -1938,17 +2016,14 @@ void grammarGame(User userData, int rows, int columns)
                         moveCursorToPosition((columns - charCount) / 2, rows - 4);
 
                         cout << sentence;
-                         moveCursorToPosition((columns - charCount) / 2, rows);
-                        cout << ":: Options :: Only 1 Try ! ::";
-                        moveCursorToPosition((columns - charCount) / 2, rows + 2);
-                        cout << entry.second[5];
-                        moveCursorToPosition((columns - charCount) / 2, rows +4);
-                        cout << entry.second[6];
-                        moveCursorToPosition((columns - charCount) / 2, rows+6);
-                        cout << entry.second[7];
                         
+                         vector<string> op = {entry.second[5], entry.second[6], entry.second[7]};
 
-                        string trueSentence = entry.second[0];
+
+                
+                 
+
+                        string trueSentence = entry.second[0]; 
                         std::string str[4]; // Define a fixed-size array
                         str[0] = entry.second[1];
                         str[1] = entry.second[2];
@@ -1961,13 +2036,14 @@ void grammarGame(User userData, int rows, int columns)
                         {
                             updateSenData(userData.id, userData.name, SenUserData.level, SenUserData.score, SenUserData.coin - 1);
                             string hint = str[hintCount++ % 4];
-                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 8);
+                            moveCursorToPosition((columns - hint.length() - 10) / 2, rows -2);
                             cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
                         }
 
-                        moveCursorToPosition((columns - 40) / 2, rows +10);
-                        cout << "Type Your Sentence Here: ";
-                        getline(cin, userSentence);
+                        moveCursorToPosition((columns - 40) / 2, rows-3);
+                        userSentence = buttons(rows, columns, op);
+                          clearLines(rows-4, rows+4);
+                              
 
                         if (toLower(userSentence) == toLower(trueSentence))
                         {
@@ -1989,13 +2065,22 @@ void grammarGame(User userData, int rows, int columns)
                         attp++; // Increment attempt count
                         if (attp >= 2)
                         {
-                            moveCursorToPosition((columns - 35) / 2, rows + 2);
-                            cout << Color_Bright_Red << "+--------------------------------+";
-                            moveCursorToPosition((columns - 35) / 2, rows + 3);
-                 cout << "|  Wrong Sentence! Try Again!     " << "Trys :" + to_string(attp) + "   |";
-                        
-                            moveCursorToPosition((columns - 35) / 2, rows + 4);
-                            cout << "+--------------------------------+" << Color_Reset;
+                       
+                            moveCursorToPosition((columns - 35) / 2, rows );
+                          
+
+                          moveCursorToPosition((columns - 35) / 2, rows);
+    cout << "+-------------------------------------------------+" ;
+
+    // Move cursor and display the message line
+    moveCursorToPosition((columns - 35) / 2, rows + 1);
+    cout <<  "|  " << Color_Yellow << "  Wrong Sentence! Try Again!          "
+         << "Attempts: " << attp << "  " << Color_Bright_Red << "|" ;
+
+    // Move cursor and display the bottom border
+    moveCursorToPosition((columns - 35) / 2, rows + 2);
+    cout <<  "+-------------------------------------------------+" ;
+
                             sele = 3; // Force exit
                             isRunning = false; // End loop
                             break;
@@ -2011,8 +2096,17 @@ void grammarGame(User userData, int rows, int columns)
                             cout << "+--------------------------------+" << Color_Reset;
 
                             sele = hintButtons(rows + 6);
+
                             if (sele == 1)
+                                
                                 continue;
+                            else if (sele == 0)
+                            {
+                                sele = 0;
+
+                                continue;
+                                sele = 0;
+                            }
                             else if (sele == 2)
                             {
                                 system("cls");
