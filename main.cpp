@@ -2,19 +2,17 @@
 #include <windows.h>
 #include <string>
 #include <conio.h>
-#include "src/headding.cpp"           // namespace, windows.h, iostream, system.cpp
+#include "src/headding.cpp" // namespace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
 #include "src/game/WordScramble.cpp"
 
 #include <iostream>
 #include <vector>
- 
+
 #include <algorithm>
 #include <sstream>
 #include <ctime>
-
-
 
 // Struct to represent a game
 struct Games
@@ -36,10 +34,7 @@ std::vector<Games> gameList = {
     {1, "Sentence Scramble", "sentenceScramble"},
     {2, "Puzzle Alfa", "Puzal"},
     {3, "Verb and Noun", "wordScramble2"},
-    {4, "Word Scramble", "wordScramble"}
-};
-
-
+    {4, "Word Scramble", "wordScramble"}};
 
 // Global variables for terminal size
 int G_columns, G_rows;
@@ -68,12 +63,10 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
 // Games
 void wordScramble(User userData);
 void sentenceScramble(User userData);
- 
 
 // ------------------------------------------------------------------------------------ //
 // --------------------------------- MAIN FUNCTION ------------------------------------ //
 // ------------------------------------------------------------------------------------ //
-
 
 int main()
 {
@@ -126,8 +119,6 @@ int main()
 
     _getch();
 }
-
-
 
 // ------------------------------------------------------------------------------------ //
 // --------------------------------- Helper tools  ------------------------------------ //
@@ -931,9 +922,6 @@ string stageArrayToString(int stage[])
     return ss.str();
 }
 
-
-
-
 void printLine(char start, char mid, char end, int widths[], int numCols, char fill)
 {
     printf("%c", start);
@@ -1075,15 +1063,9 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
     cout << Color_Reset;
 }
 
-
-
-
 // ------------------------------------------------------------------------------------ //
 // ---------------------------------  wordScramble ------------------------------------ //
 // ------------------------------------------------------------------------------------ //
-
-
-
 
 void wordScramble(User userData)
 {
@@ -1121,12 +1103,14 @@ void wordScramble(User userData)
                         clearLines(rows - 32, rows - 10);
                         UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Word Scramble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
                         moveCursorToPosition((columns - (wordIntr.length() * 2) - wordIntr.length()) / 2, rows - 32);
-                        for (const auto &latter : wordIntr) {
+                        for (const auto &latter : wordIntr)
+                        {
                             cout << "  " << static_cast<char>(toupper(latter));
                         }
                         string trueWord = entry.first;
                         string userWord;
-                        if (sele == 0) {
+                        if (sele == 0)
+                        {
                             updateWordScrambleData(userData.id, userData.name, WordScrambleUserData.level, WordScrambleUserData.score, WordScrambleUserData.coin - 1);
                             string hint = entry.second[hintCount++ % 5];
                             moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 30);
@@ -1220,14 +1204,13 @@ void wordScramble(User userData)
     //    cout << "Original: " << word << " | Shuffled: " << wordIntr << endl;
 }
 
-
-struct SentenceScrambleData {
+struct SentenceScrambleData
+{
     int level;
     int score;
     int coin;
 };
 
- 
 map<int, vector<pair<string, vector<string>>>> vocabulary1;
 
 #include <map>
@@ -1236,53 +1219,66 @@ map<int, vector<pair<string, vector<string>>>> vocabulary1;
 // Sample user data storage (e.g., in-memory for simplicity)
 std::map<int, SentenceScrambleData> userSentenceScrambleDatabase;
 
-void updateSentenceScrambleData(int userId, const std::string& userName, int newLevel, int newScore, int newCoin) {
+void updateSentenceScrambleData(int userId, const std::string &userName, int newLevel, int newScore, int newCoin)
+{
     // Check if user data exists in the database
-    if (userSentenceScrambleDatabase.find(userId) != userSentenceScrambleDatabase.end()) {
+    if (userSentenceScrambleDatabase.find(userId) != userSentenceScrambleDatabase.end())
+    {
         // Update existing data
         userSentenceScrambleDatabase[userId].level = newLevel;
         userSentenceScrambleDatabase[userId].score = newScore;
         userSentenceScrambleDatabase[userId].coin = newCoin;
-    } else {
+    }
+    else
+    {
         // Insert new data if user doesn't exist
-        SentenceScrambleData newData = { newLevel, newScore, newCoin };
+        SentenceScrambleData newData = {newLevel, newScore, newCoin};
         userSentenceScrambleDatabase[userId] = newData;
     }
 
     // Optional: display updated information for confirmation
-    std::cout << "Data updated for user ID " << userId << ": Level " << newLevel 
+    std::cout << "Data updated for user ID " << userId << ": Level " << newLevel
               << ", Score " << newScore << ", Coin " << newCoin << std::endl;
 }
 
-SentenceScrambleData getSingleUserSentenceScrambleData(int userId, const std::string& userName) {
+SentenceScrambleData getSingleUserSentenceScrambleData(int userId, const std::string &userName)
+{
     // Check if user data exists in the database
-    if (userSentenceScrambleDatabase.find(userId) != userSentenceScrambleDatabase.end()) {
+    if (userSentenceScrambleDatabase.find(userId) != userSentenceScrambleDatabase.end())
+    {
         return userSentenceScrambleDatabase[userId]; // Return found data
-    } else {
+    }
+    else
+    {
         // If user data is not found, create default data for them
-        SentenceScrambleData defaultData = {1, 0, 0}; // Default level: 1, score: 0, coin: 0
+        SentenceScrambleData defaultData = {1, 0, 0};       // Default level: 1, score: 0, coin: 0
         userSentenceScrambleDatabase[userId] = defaultData; // Store it in the database
-        return defaultData; // Return default data
+        return defaultData;                                 // Return default data
     }
 }
 
-void loadSentencesFromFile(const string& filename) {
+void loadSentencesFromFile(const string &filename)
+{
     ifstream file(filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         cerr << "Error: Could not open the file!" << endl;
         return;
     }
 
     string line;
-    while (getline(file, line)) {
+    while (getline(file, line))
+    {
         stringstream ss(line);
         string sentence;
         vector<string> hints;
         string hint;
 
         // Extract sentence (the first part before '|')
-        if (getline(ss, sentence, '|')) {
-            while (getline(ss, hint, '|')) {
+        if (getline(ss, sentence, '|'))
+        {
+            while (getline(ss, hint, '|'))
+            {
                 hints.push_back(hint);
             }
             // Assuming you want to add the sentence to level 0 for now
@@ -1292,34 +1288,38 @@ void loadSentencesFromFile(const string& filename) {
     file.close();
 }
 
-string shuffleSentence(const string& sentence) {
+string shuffleSentence(const string &sentence)
+{
     string shuffled = sentence;
     random_shuffle(shuffled.begin(), shuffled.end());
     return shuffled;
 }
 
-void sentenceScramble(User userData) {
-    int rows = 20; // Sample row value for now
-    int columns = 50; // Sample column value for now
+void sentenceScramble(User userData)
+{
+    int rows = 20;                             // Sample row value for now
+    int columns = 50;                          // Sample column value for now
     srand(static_cast<unsigned int>(time(0))); // Seed for randomness
-    map<int, vector<pair<string, vector<string>>>> vocabulary1;   
+    map<int, vector<pair<string, vector<string>>>> vocabulary1;
 
-    while (true) {
+    while (true)
+    {
         int stage[3] = {-1, -1, -1}; // Track stages
-        int sele = -1; // User selection state
-        int hintCount = 0; // To track hint usage
-        int stg = 0; // Stage index
+        int sele = -1;               // User selection state
+        int hintCount = 0;           // To track hint usage
+        int stg = 0;                 // Stage index
         string trueSentence;
         string userSentence;
 
         // Load the sentences from vocabulary (this part should be implemented elsewhere)
-        auto entry = vocabulary1[0];  // Assuming level 0 for now
+        auto entry = vocabulary1[0]; // Assuming level 0 for now
         int totalSentences = entry.size();
-        int randomeIndex = rand() % totalSentences; // Randomly pick a sentence
-        string MySentence = entry[randomeIndex].first;  // Original sentence
-        string scrambledSentence = shuffleSentence(MySentence);  // Function to scramble sentence
+        int randomeIndex = rand() % totalSentences;             // Randomly pick a sentence
+        string MySentence = entry[randomeIndex].first;          // Original sentence
+        string scrambledSentence = shuffleSentence(MySentence); // Function to scramble sentence
 
-        while (sele <= 3) {
+        while (sele <= 3)
+        {
             // Display UI components
             clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
             ThemeFormate(rows, columns);
@@ -1327,12 +1327,13 @@ void sentenceScramble(User userData) {
             int level = levelSelection(rows, columns, 5, SentenceScrambleUserData.level);
             clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
             ThemeFormate(rows, columns);
-            
+
             UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Scramble :::  " + Color_Yellow + " Score : [" + to_string(SentenceScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(SentenceScrambleUserData.coin));
 
             // Display scrambled sentence
             moveCursorToPosition((columns - (scrambledSentence.length() * 2) - scrambledSentence.length()) / 2, rows - 32);
-            for (const auto& letter : scrambledSentence) {
+            for (const auto &letter : scrambledSentence)
+            {
                 cout << "  " << static_cast<char>(toupper(letter));
             }
 
@@ -1341,7 +1342,8 @@ void sentenceScramble(User userData) {
             cout << "Type Your Sentence Here : ";
             getline(cin, userSentence); // Get input
 
-            if (toLower(userSentence) == toLower(MySentence)) { // Check if the sentence is correct
+            if (toLower(userSentence) == toLower(MySentence))
+            { // Check if the sentence is correct
                 moveCursorToPosition((columns - 22) / 2, rows - 25);
                 cout << Color_Bright_Green << "+---------------------+";
                 moveCursorToPosition((columns - 22) / 2, rows - 24);
@@ -1350,7 +1352,9 @@ void sentenceScramble(User userData) {
                 cout << "+---------------------+" << Color_Reset;
                 moveCursorToPosition(columns, rows - 22);
                 stage[stg++] = 10; // Move to next stage
-            } else {
+            }
+            else
+            {
                 moveCursorToPosition((columns - 35) / 2, rows - 25);
                 cout << Color_Bright_Red << "+--------------------------------+";
                 moveCursorToPosition((columns - 35) / 2, rows - 24);
@@ -1360,46 +1364,51 @@ void sentenceScramble(User userData) {
 
                 sele = hintButtons(34); // Call the hint button function
 
-                if (sele == 1) {
+                if (sele == 1)
+                {
                     continue; // Retry the sentence scramble
                 }
-                else if (sele == 2) {
+                else if (sele == 2)
+                {
                     return; // Exit the game
                 }
-                else if (sele == 3) {
+                else if (sele == 3)
+                {
                     break; // Proceed to next stage
                 }
             }
 
-            if (stg >= 3) { // Check if the game has ended
+            if (stg >= 3)
+            { // Check if the game has ended
                 clearLines(Color_Bright_Red.length() + Color_Yellow.length(), rows - 10);
                 ThemeFormate(rows, columns);
                 UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Scramble :::  " + Color_Yellow + " Score : [" + to_string(SentenceScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(SentenceScrambleUserData.coin));
 
                 char gameName[50] = "Sentence Scramble";
                 int currentPlayScore = 0;
-                for (int i = 0; i < 3; ++i) {
+                for (int i = 0; i < 3; ++i)
+                {
                     currentPlayScore += stage[i]; // Calculate total score
                 }
 
                 updateSentenceScrambleData(userData.id, userData.name, SentenceScrambleUserData.level + 1, SentenceScrambleUserData.score + currentPlayScore, SentenceScrambleUserData.coin + 1);
                 ScoreBoard(gameName, level, SentenceScrambleUserData.score, currentPlayScore, G_columns, G_rows); // Display score board
-                level++; // Move to next level
+                level++;                                                                                          // Move to next level
                 _getch();
                 break;
             }
-            else {
+            else
+            {
                 sele = 0; // Reset the selection state
             }
 
-            if (sele == 3) {
+            if (sele == 3)
+            {
                 break; // Exit loop
             }
         }
     }
 }
-
-
 
 // void verbOrNoun(int rows, int columns, User userData) {
 //     clearScreen();
