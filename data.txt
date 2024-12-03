@@ -1,0 +1,3 @@
+The quick brown fox | It's an animal | Starts with 'f' | It jumps
+A journey of a thousand miles | A famous proverb | Starts with 'A' | It's about travel
+
