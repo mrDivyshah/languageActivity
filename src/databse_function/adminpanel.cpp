@@ -22,6 +22,7 @@ using namespace std;
 #define BOLD "\033[1m"
 #define UNDERLINE "\033[4m"
 
+
 // Structs for User and Status
 struct User
 {
@@ -63,6 +64,8 @@ int getNextUserId()
     }
     return id + 1; // Increment ID for the new user
 }
+
+    
 
 
 
