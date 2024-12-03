@@ -1,3 +1,10 @@
-1,Identify the tense in "He is running.",Present Continuous,Tense,Focus on "is running",Present tense with "is",Action currently happening,Present Continuous,Past Simple,Future Perfect
-2,What is the plural of "child"?,Children,Plural,Irregular plural,Look for irregular words,"child" becomes "children",Children,Childs,Childrens
-3,Fill in the blank: "She ___ to the market." (past tense),went,Tense,Past action,Verb form of "go",Example: "He went home",Went,Go,Goes
+1, What is the opposite of "big"?, Small, Antonyms, Look for opposite words, "big" becomes "small", Small, Large, Huge 
+1, Identify the tense in "They will have eaten.", Future Perfect, Tense, Focus on "will have eaten", Future tense with "will have", Action completed in the future, Future Simple, Present Perfect, Past Simple 
+1, What is the plural of "tooth"?, Teeth, Plural, Irregular plural, Look for irregular words, "tooth" becomes "teeth", Teeth, Tooths, Teath 
+1, Identify the tense in "She was studying.", Past Continuous, Tense, Focus on "was studying", Past tense with "was", Action happening in the past, Past Simple, Present Perfect, Future Simple 
+1, What is the meaning of "happy"?, Joyful, Synonyms, Look for similar words, "happy" means "joyful", Joyful, Sad, Angry 
+1, Identify the tense in "He has been running.", Present Perfect Continuous, Tense, Focus on "has been running", Present tense with "has been", Action started in the past and continues, Present Simple, Past Simple, Future Simple 
+1, What is the opposite of "fast"?, Slow, Antonyms, Look for opposite words, "fast" becomes "slow", Slow, Quick, Rapid 
+1, Identify the tense in "They will go.", Future Simple, Tense, Focus on "will go", Future tense with "will", Action happening in the future, Present Simple, Past Simple, Present Continuous 
+1, What is the meaning of "big"?, Large, Synonyms, Look for similar words, "big" means "large", Large, Small, Huge 
+1, Identify the tense in "She had eaten.", Past Perfect, Tense, Focus on "had eaten", Past tense with "had", Action completed before another action, Past Simple, Present Perfect, Future Simple
