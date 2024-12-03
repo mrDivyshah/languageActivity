@@ -69,6 +69,38 @@ void displayUsers()
     }
 }
 
+bool validateUser(const string &name, const string &password)
+{
+    ifstream file(USER_DATABASE);
+    string line;
+
+    // Loop through each line in the file
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        int id;
+        string joiningDate;
+        string existingName, existingPassword;
+
+        // Read the data from the line
+        ss >> id;
+        getline(ss, joiningDate, ','); // Get joiningDate
+        getline(ss, existingName, ','); // Get name
+        getline(ss, existingPassword, ','); // Get password
+
+        // Trim leading whitespace for name
+        existingName.erase(0, existingName.find_first_not_of(' '));
+
+        // Compare name and password
+        if (existingName == name && existingPassword == password)
+        {
+            return true; // User and password match
+        }
+    }
+
+    return false; // No matching user or incorrect password
+}
+
 bool userExists(const string &name)
 {
     ifstream file(USER_DATABASE);

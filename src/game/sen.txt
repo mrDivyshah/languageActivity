@@ -1,0 +1,29 @@
+1,Apples are red,Start with 'Apples',End with 'red'.
+1,Bananas are yellow,Start with 'Bananas',End with 'yellow'.
+1,I am a boy,Start with 'I',End with 'boy'.
+1,Milk is white,Start with 'Milk',End with 'white'.
+1,Sky is blue,Start with 'Sky',End with 'blue'.
+1,Water is essential,Start with 'Water',End with 'essential'.
+1,Sun gives light,Start with 'Sun',End with 'light'.
+1,Earth is round,Start with 'Earth',End with 'round'.
+1,Books teach us,Start with 'Books',End with 'us'.
+2,Fruits are very healthy,Start with 'Fruits',End with 'healthy'.
+2,Exercise maintains physical health,Start with 'Exercise',End with 'health'.
+2,Reading books enhances knowledge,Start with 'Reading',End with 'knowledge'.
+2,Kindness creates positive connections,Start with 'Kindness',End with 'connections'.
+2,Flowers bloom during springtime,Start with 'Flowers',End with 'springtime'.
+2,Sunsets are breathtakingly beautiful,Start with 'Sunsets',End with 'beautiful'.
+2,Friendship is based on trust,Start with 'Friendship',End with 'trust'.
+2,Hard work leads to success,Start with 'Hard work',End with 'success'.
+2,Rivers flow toward the oceans,Start with 'Rivers',End with 'oceans'.
+2,Gratitude fosters happiness in life,Start with 'Gratitude',End with 'life'.
+3,Discipline is essential for achieving goals,Start with 'Discipline',End with 'goals'.
+3,Education empowers individuals to achieve success,Start with 'Education',End with 'success'.
+3,The sky turns orange at sunset,Start with 'The sky',End with 'sunset'.
+3,Confidence leads to better opportunities in life,Start with 'Confidence',End with 'life'.
+3,Patience helps people handle stressful situations calmly,Start with 'Patience',End with 'calmly'.
+3,Music soothes the soul and uplifts the spirit,Start with 'Music',End with 'spirit'.
+3,Travel enriches life by exposing us to diverse cultures,Start with 'Travel',End with 'cultures'.
+3,Compassion for others strengthens human connections,Start with 'Compassion',End with 'connections'.
+3,Integrity is the foundation of trust and credibility,Start with 'Integrity',End with 'credibility'.
+3,Technology simplifies life and enhances global communication,Start with 'Technology',End with 'communication'.
