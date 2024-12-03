@@ -1,10 +1,41 @@
-1, What is the opposite of "big"?, Small, Antonyms, Look for opposite words, "big" becomes "small", Small, Large, Huge 
-1, Identify the tense in "They will have eaten.", Future Perfect, Tense, Focus on "will have eaten", Future tense with "will have", Action completed in the future, Future Simple, Present Perfect, Past Simple 
-1, What is the plural of "tooth"?, Teeth, Plural, Irregular plural, Look for irregular words, "tooth" becomes "teeth", Teeth, Tooths, Teath 
-1, Identify the tense in "She was studying.", Past Continuous, Tense, Focus on "was studying", Past tense with "was", Action happening in the past, Past Simple, Present Perfect, Future Simple 
-1, What is the meaning of "happy"?, Joyful, Synonyms, Look for similar words, "happy" means "joyful", Joyful, Sad, Angry 
-1, Identify the tense in "He has been running.", Present Perfect Continuous, Tense, Focus on "has been running", Present tense with "has been", Action started in the past and continues, Present Simple, Past Simple, Future Simple 
-1, What is the opposite of "fast"?, Slow, Antonyms, Look for opposite words, "fast" becomes "slow", Slow, Quick, Rapid 
-1, Identify the tense in "They will go.", Future Simple, Tense, Focus on "will go", Future tense with "will", Action happening in the future, Present Simple, Past Simple, Present Continuous 
-1, What is the meaning of "big"?, Large, Synonyms, Look for similar words, "big" means "large", Large, Small, Huge 
-1, Identify the tense in "She had eaten.", Past Perfect, Tense, Focus on "had eaten", Past tense with "had", Action completed before another action, Past Simple, Present Perfect, Future Simple
+1, He ___ to the store every day, goes, Verb for regular movement, Third-person singular form, Present tense of the verb, Expressing routine action, go, go, goes, gone
+1, She ___ a book right now, is reading, Action happening currently, Present continuous tense, Use the verb "to be", Verb ending in "-ing", read, reads, reading, read
+1, They ___ to the park on weekends, go, Verb for habitual action, Present tense, Regular plural form, Use of the verb for routine actions, go, goes, going, gone
+1, I ___ a coffee this morning, drank, Past tense, Regular past tense verb, Use "drink" in the past, Refers to completed action in the past, drink, drank, drunk, drinking
+1, We ___ at home tonight, are staying, Action happening now, Present continuous, Use verb "to be", Continuous form of "stay", stay, stays, are staying, stayed
+1, She ___ like ice cream, doesn't, Negative form, Third person singular, Present tense of "do", Use in negative sentences, don't, does, doesn't, did
+
+2, They ___ already ___ their homework, have, done, Action completed in the past, Present perfect tense, Use auxiliary verb "have", Describes past action with present relevance, have, has, have, had
+2, I ___ to visit Paris someday, want, Expressing future desire, Use verb for expressing wishes, Future tense, Shows intention, want, wants, wanted, will want
+2, She ___ a new dress for the party, bought, Completed action, Simple past tense, Past form of "buy", Describes an action completed in the past, buy, bought, buys, buying
+2, We ___ a meeting last week, had, Simple past action, Past tense of "have", Describes a past event, have, had, has, having
+2, They ___ been to London before, have, Present perfect, Experience or action completed at an unspecified time, Use "have" with past participle, Describes past experience without a time reference, have, has, have, had
+2, I ___ you to finish your homework, asked, Past tense of a request, Completed action, Past form of "ask", Refers to a past request, asks, asked, asking, ask
+
+3, The cake ___ delicious, is, Description of something in the present, Use linking verb "is", Singular form, States a fact about something, tastes, is, are, was
+3, He ___ to his friends every week, talks, Verb for regular communication, Third-person singular, Present tense of "talk", Habitual action, talk, talks, talking, talked
+3, We ___ the match yesterday, won, Action completed in the past, Simple past tense, Past form of "win", Describes a completed past event, win, won, wins, winning
+3, She ___ to the gym every morning, goes, Regular activity, Present tense of "go", Third-person singular, Habitual activity, go, goes, going, gone
+3, They ___ playing football at the moment, are, Present continuous tense, Ongoing action, Use verb "to be", Describes something happening now, is, are, were, was
+3, I ___ like the movie we watched, didn’t, Negative past action, Use "didn't" with base form of the verb, Past action, don't, doesn't, did, didn't
+
+4, He ___ speak three languages fluently, can, Ability in the present, Use modal verb, Present form of "can", Shows ability, can, could, will, may
+4, I ___ to the cinema next Saturday, will go, Future plan, Action that will happen in the future, Use modal "will", Describes a scheduled event, goes, going, will go, go
+4, She ___ finish her homework tomorrow, will, Future action, Use "will" for the future, Describes an action that will happen, will, going, finishes, finish
+4, We ___ be at the party later, will, Future certainty, Use "will" for something certain in the future, Refers to definite future action, are, were, will, going
+4, He ___ to the office by train every day, goes, Habitual action, Present tense of "go", Third-person singular, Repeats every day, goes, going, gone, went
+4, I ___ finish reading this book soon, will, Future prediction, Use "will" for future predictions, Expressing an intention, finishes, will, will finish, finish
+
+5, She ___ a new phone yesterday, bought, Past tense of "buy", Completed action, Simple past, Refers to a specific past event, buy, bought, buys, buying
+5, We ___ the concert last night, enjoyed, Past action, Simple past tense, Enjoyment in the past, Describes something we liked, enjoys, enjoyed, enjoy, enjoying
+5, They ___ on vacation last week, were, Past state or condition, Use "were" in the past, Describes a past state, was, were, will, would
+5, I ___ my homework when you called, was doing, Action happening before past event, Past continuous tense, Describes an ongoing action interrupted by another, do, did, was doing, doing
+5, We ___ our homework by the time they arrived, had finished, Past action completed before another action, Past perfect tense, Refers to something completed before another past action, finish, finished, had finished, was finishing
+5, She ___ like the idea of the new project, doesn't, Negative form, Third-person singular, Present tense of "do", Expresses dislike, don't, doesn't, did, doing
+
+6, I ___ to work next Monday, am going, Future arrangement, Use "am" + verb + going, future plan, Refers to a planned future event, am, was, were, going
+6, They ___ a great time at the party last night, had, Past action, Simple past tense, Enjoyment in the past, Describes a good experience, have, had, has, will have
+6, She ___ to the office early tomorrow, will go, Future action, Use "will" for future events, Planned action, goes, will go, going, gone
+6, We ___ to the museum next week, are going, Planned future event, Use present continuous for future arrangements, Refers to something already scheduled, go, goes, are going, will go
+6, I ___ my best friend at the coffee shop tomorrow, will meet, Future event, Use "will" for planned actions, Scheduled event, meet, will meet, meets, meeting
+6, He ___ a great player when he was younger, was, Describing past condition, Past form of "be", Describes a past state, is, was, will, being
