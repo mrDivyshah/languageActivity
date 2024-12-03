@@ -2,6 +2,9 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -99,4 +102,48 @@ using namespace std;
             {"integration", {"Combines systems", "Ensures compatibility", "Used in software development", "Facilitates communication", "Enhances functionality"}}
         }}
     };
+
+int main() {
+    
+
+    // File names
+    ofstream wordFile("WordScrumble_Words.txt");
+    ofstream hintFile("WordScrumble_Words_Hints.txt");
+
+    if (!wordFile.is_open() || !hintFile.is_open()) {
+        cerr << "Error: Unable to open files for writing." << endl;
+        return 1;
+    }
+
+    // Auto-incrementing primary key for words
+    int wordId = 1;
+
+    // Write data to files
+    for (const auto &level : vocabulary) {
+        int levelNumber = level.first;
+
+        for (const auto &entry : level.second) {
+            const string &word = entry.first;
+            const vector<string> &hints = entry.second;
+
+            // Write to WordScrumble_Words.txt (CSV Format)
+            wordFile << wordId << ", " << word << ", " << levelNumber << endl;
+
+            // Write each hint to WordScrumble_Words_Hints.txt
+            for (const auto &hint : hints) {
+                hintFile << wordId << ", \"" << hint << "\"" << endl;
+            }
+
+            // Increment wordId for the next word
+            ++wordId;
+        }
+    }
+
+    wordFile.close();
+    hintFile.close();
+
+    cout << "Files generated successfully!" << endl;
+
+    return 0;
+}
 
