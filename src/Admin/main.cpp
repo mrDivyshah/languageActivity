@@ -157,6 +157,63 @@ void displayMenu()
     cout << Color_Green << "Enter your choice: " << Color_Reset;
 }
 
+
+
+
+using namespace std;
+
+// File names
+const string WORD_DATA_FILE = "WordScrumble_Words.txt";
+const string HINTS_DATA_FILE = "WordScrumble_Words_Hints.txt";
+
+void addWordScrambleData()
+{
+    fstream wordFile(WORD_DATA_FILE, ios::app);
+    fstream hintsFile(HINTS_DATA_FILE, ios::app);
+
+    if (!wordFile.is_open() || !hintsFile.is_open())
+    {
+        cout << "Error: Unable to open data files.\n";
+        return;
+    }
+
+    string word, hint;
+    int id, category;
+
+    cout << "Enter the Word ID: ";
+    cin >> id;
+    cin.ignore();
+
+    cout << "Enter the Word: ";
+    getline(cin, word);
+
+    cout << "Enter the Category (1 for easy, 2 for medium, 3 for hard): ";
+    cin >> category;
+    cin.ignore();
+
+    wordFile << id << "," << word << "," << category << "\n";
+
+    cout << "Enter hints for the word (type 'done' to finish):\n";
+    while (true)
+    {
+        cout << "Hint: ";
+        getline(cin, hint);
+
+        if (hint == "done")
+            break;
+
+        hintsFile << id << "," << '"' << hint << '"' << "\n";
+    }
+
+    cout << "Word and hints added successfully!\n";
+
+    wordFile.close();
+    hintsFile.close();
+}
+
+
+
+
 void adminPanel()
 {
     while (true)
@@ -206,6 +263,10 @@ void adminPanel()
             system("cls");
             break;
         }
+        else if (choice == 6) // Assuming option 6 is for adding Word Scramble data
+        {
+            addWordScrambleData();
+        }
 
         else
         {
@@ -218,3 +279,5 @@ void adminPanel()
         system("cls");
     }
 }
+
+
