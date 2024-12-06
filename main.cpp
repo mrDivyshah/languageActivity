@@ -867,7 +867,6 @@ int hintButtons(int row)
             cout << "-----------";
         }
 
-
         // Button 3: Exit
         moveCursorToPosition(thirdColumn, row);
         if (currentSelection == 2)
@@ -1244,27 +1243,32 @@ void ScoreBoard(char gameName[50], int level, int totalScore, int currentPlaySco
 
 // Shuffle Words Code started -----------+++++++++++++---------
 
-string shuffleSentence(const string &sentence) {
+string shuffleSentence(const string &sentence)
+{
     vector<string> words;
     string word;
     istringstream stream(sentence);
-    while (stream >> word) {
+    while (stream >> word)
+    {
         words.push_back(word);
     }
 
-    vector<string> originalWords = words; 
+    vector<string> originalWords = words;
 
-    do {
+    do
+    {
         shuffle(words.begin(), words.end(), default_random_engine(rand()));
-    } while (words == originalWords); 
+    } while (words == originalWords);
 
     stringstream shuffledSentence;
-    for (const auto &w : words) {
+    for (const auto &w : words)
+    {
         shuffledSentence << w << " ";
     }
 
     string result = shuffledSentence.str();
-    if (!result.empty() && result.back() == ' ') {
+    if (!result.empty() && result.back() == ' ')
+    {
         result.pop_back();
     }
 
@@ -1302,7 +1306,7 @@ map<int, vector<pair<string, vector<string>>>> loadVocabulary(const string &file
 
 void sen(User userData, int rows, int columns)
 {
-    string filename = "./src/game/sen.txt";           
+    string filename = "./src/game/sen.txt";
     map<int, vector<pair<string, vector<string>>>> sentences = loadVocabulary(filename);
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
@@ -1380,9 +1384,6 @@ void sen(User userData, int rows, int columns)
                         WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
                         clearLines(rows - 10, rows + 11);
                         UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
-                        // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length()) / 2, rows - 4);
-                        // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length())/1.7, rows - 2);
-                        // center_Text(jumbledSentence, rows);
                         int charCount = jumbledSentence.length();
                         moveCursorToPosition((columns - charCount) / 2, rows - 4);
 
@@ -1469,71 +1470,3 @@ void sen(User userData, int rows, int columns)
         }
     }
 }
-// void verbOrNoun(int rows, int columns, User userData) {
-//     clearScreen();
-//     drawHeader("Verb or Noun Game");
-
-//     map<string, string> words = {{"run", "verb"}, {"apple", "noun"}, {"jump", "verb"}, {"table", "noun"}};
-//     int score = 0;
-
-//     for (int i = 0; i < 5; ++i) {
-//         auto it = words.begin();
-//         advance(it, rand() % words.size());
-//         string word = it->first;
-//         string type = it->second;
-
-//         displayText("Is '" + word + "' a verb or noun? (v/n): ", YELLOW);
-//         char answer;
-//         cin >> answer;
-
-//         if ((answer == 'v' && type == "verb") || (answer == 'n' && type == "noun")) {
-//             displayText("Correct!", GREEN);
-//             score += 10;
-//         } else {
-//             displayText("Wrong!", RED);
-//         }
-//     }
-
-//     displayText("Your final score: " + to_string(score), BOLD + GREEN);
-//     drawBorder();
-// }
-
-// void hangman() {
-//     clearScreen();
-//     drawHeader("Hangman Game");
-
-//     vector<string> words = {"hangman", "game", "terminal", "program"};
-//     string word = words[rand() % words.size()];
-
-//     string guessed(word.size(), '_');
-//     int lives = 6;
-
-//     while (lives > 0 && guessed != word) {
-//         displayText("Word: " + guessed, YELLOW);
-//         displayText("Lives remaining: " + to_string(lives), RED);
-
-//         char guess;
-//         displayText("Enter a letter: ", GREEN);
-//         cin >> guess;
-
-//         bool correct = false;
-//         for (size_t i = 0; i < word.size(); ++i) {
-//             if (word[i] == guess) {
-//                 guessed[i] = guess;
-//                 correct = true;
-//             }
-//         }
-
-//         if (!correct) {
-//             --lives;
-//         }
-//     }
-
-//     if (guessed == word) {
-//         displayText("You won! The word was: " + word, GREEN);
-//     } else {
-//         displayText("Game over! The word was: " + word, RED);
-//     }
-
-//     drawBorder();
-// }
