@@ -9,6 +9,7 @@
 #include <string>
 #include <conio.h>
 #include <random>
+#include <unordered_set>
 #include "src/headding.cpp" // nameSpace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
