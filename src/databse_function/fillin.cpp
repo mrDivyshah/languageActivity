@@ -8,10 +8,11 @@
 
 using namespace std;
 
-#define Sen getCurrentDirectory() + "/database/sentenceUser.txt"
-// #define Sen "D:/cpp project/languageActivity/database/Sen.txt"
+#define Fillinthe getCurrentDirectory() + "/database/fillinUser.txt"
+// #define Fillinthe "D:/cpp project/languageActivity/database/Fillinthe.txt"
 
-struct SenData {
+struct FillintheData
+{
     int UserId;
     string Timestamp;
     string modifyingTimestamp;
@@ -21,11 +22,11 @@ struct SenData {
     int coin;
 };
 
-// Add Data 
-void addSenData(int userId, const string name, int level, int score, int coin)
+// Add Data
+void addFillintheData(int userId, const string name, int level, int score, int coin)
 {
     ofstream file;
-    SenData data;
+    FillintheData data;
     data.UserId = userId;
     data.Timestamp = getTime();
     data.modifyingTimestamp = data.Timestamp;
@@ -33,7 +34,7 @@ void addSenData(int userId, const string name, int level, int score, int coin)
     data.level = level;
     data.score = score;
     data.coin = coin;
-    file.open(Sen, ios::app);
+    file.open(Fillinthe, ios::app);
     if (!file.is_open())
     {
         cerr << "Failed to open the file." << endl;
@@ -52,22 +53,22 @@ void addSenData(int userId, const string name, int level, int score, int coin)
 }
 
 // Update Data
-void updateSenData(int userId, const string name, int newLevel, int newScore, int newCoin)
+void updateFillintheData(int userId, const string name, int newLevel, int newScore, int newCoin)
 {
-    ifstream inFile(Sen);
+    ifstream inFile(Fillinthe);
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
         return;
     }
 
-    vector<SenData> dataEntries;
+    vector<FillintheData> dataEntries;
     string line;
 
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        SenData data;
+        FillintheData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -95,7 +96,7 @@ void updateSenData(int userId, const string name, int newLevel, int newScore, in
     }
     inFile.close();
 
-    ofstream outFile(Sen);
+    ofstream outFile(Fillinthe);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -116,22 +117,22 @@ void updateSenData(int userId, const string name, int newLevel, int newScore, in
 }
 
 // Get Data
-vector<SenData> getSenData()
+vector<FillintheData> getFillintheData()
 {
-    vector<SenData> dataEntries;
-    ifstream inFile(Sen);
+    vector<FillintheData> dataEntries;
+    ifstream inFile(Fillinthe);
 
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
-        return dataEntries; 
+        return dataEntries;
     }
 
     string line;
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        SenData data;
+        FillintheData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -151,11 +152,11 @@ vector<SenData> getSenData()
     }
 
     inFile.close();
-    return dataEntries; 
+    return dataEntries;
 }
 
 // Display Data In Table
-void displayDataAsTable(const vector<SenData> &dataEntries)
+void displayDataAsTable(const vector<FillintheData> &dataEntries)
 {
     const int widthId = 8;
     const int widthTimestamp = 25;
@@ -193,13 +194,14 @@ void displayDataAsTable(const vector<SenData> &dataEntries)
 }
 
 // Delete Data
-void deleteSenData(int userId, const string &name)
+void deleteFillintheData(int userId, const string &name)
 {
-    vector<SenData> dataEntries = getSenData();
+    vector<FillintheData> dataEntries = getFillintheData();
     bool userFound = false;
 
     auto it = remove_if(dataEntries.begin(), dataEntries.end(),
-                        [&](const SenData &entry) {
+                        [&](const FillintheData &entry)
+                        {
                             return entry.UserId == userId && entry.name == name;
                         });
 
@@ -215,7 +217,7 @@ void deleteSenData(int userId, const string &name)
         return;
     }
 
-    ofstream outFile(Sen);
+    ofstream outFile(Fillinthe);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -238,18 +240,18 @@ void deleteSenData(int userId, const string &name)
 }
 
 // find single user data
-SenData getSingleUserSenData(int userId, const string &name)
+FillintheData getSingleUserFillintheData(int userId, const string &name)
 {
-    vector<SenData> dataEntries = getSenData();
+    vector<FillintheData> dataEntries = getFillintheData();
     for (const auto &entry : dataEntries)
     {
         if (entry.UserId == userId && entry.name == name)
         {
-            return entry; 
+            return entry;
         }
     }
     cout << "User not found in the database." << endl;
-    return SenData{-1, "", "", "", 0, 0, 0}; 
+    return FillintheData{-1, "", "", "", 0, 0, 0};
 }
 
 // fefkewfnjanajkfwnfjnfijnfnibifnew WordScumble Database  jefjkwebfiwebfdasjkdfevasasfeqj

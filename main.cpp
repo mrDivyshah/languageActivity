@@ -12,6 +12,8 @@
 #include "src/headding.cpp" // nameSpace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
+#include "src/databse_function/SenScramble.cpp"
+#include "src/databse_function/fillin.cpp"
 #include "src/game/WordScramble.cpp"
 #include "src/Admin/main.cpp"
 struct Games
@@ -1470,3 +1472,345 @@ void sen(User userData, int rows, int columns)
         }
     }
 }
+
+
+// Shuffle Words Code started -----------+++++++++++++---------
+
+
+map<int, vector<pair<string, vector<string>>>> loadfillintheblanks(const string &filename)
+{
+    map<int, vector<pair<string, vector<string>>>> vocabulary;
+    ifstream file(filename);
+
+    if (!file.is_open())
+    {
+        cerr << "Error: Unable to open file " << filename << endl;
+        return vocabulary;
+    }
+
+    string line;
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string levelStr, question, op1, op2, op3, op4, answer;
+
+        // Read level, question, options, and answer
+        if (getline(ss, levelStr, ',') && getline(ss, question, ',') &&
+            getline(ss, op1, ',') && getline(ss, op2, ',') &&
+            getline(ss, op3, ',') && getline(ss, op4, ',') &&
+            getline(ss, answer, ','))
+        {
+
+            int level = stoi(levelStr); // Convert level to integer
+            string formattedQuestion = question + " (" + op1 + ", " + op2 + ", " + op3 + ", " + op4 + ")";
+            vector<string> options = {answer, op1, op2, op3, op4};
+            vocabulary[level].emplace_back(formattedQuestion, options);
+        }
+    }
+
+    file.close();
+    return vocabulary;
+}
+
+int hintButtonsforfil(int row)
+{
+    const int LEFT_ARROW = 75;
+    const int RIGHT_ARROW = 77;
+    const int ENTER_KEY = 13;
+
+    // Calculate button positions based on G_columns
+    int firstColumn = G_columns / 6;            // Updated for 3 buttons
+    int secondColumn = 3 * (G_columns / 6) - 6; // Adjusted column spacing
+    int thirdColumn = 5 * (G_columns / 6) - 12; // third button
+
+    int currentSelection = 0; // 0 -> Retry, 1 -> Exit, 2 -> Back
+
+    while (true)
+    {
+        // Draw the buttons, highlighting the selected one
+
+        // Button 1: Retry
+        moveCursorToPosition(firstColumn, row);
+        if (currentSelection == 0)
+        {
+            cout << Color_Blue << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+        moveCursorToPosition(firstColumn, row + 1);
+        cout << "|  Retry  |";
+        moveCursorToPosition(firstColumn, row + 2);
+        if (currentSelection == 0)
+        {
+            cout << Color_Blue << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+
+        // Button 2: Exit
+        moveCursorToPosition(secondColumn, row);
+        if (currentSelection == 1)
+        {
+            cout << Color_Red << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+        moveCursorToPosition(secondColumn, row + 1);
+        cout << "|   Exit  |";
+        moveCursorToPosition(secondColumn, row + 2);
+        if (currentSelection == 1)
+        {
+            cout << Color_Red << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+
+        // Button 3: Back
+        moveCursorToPosition(thirdColumn, row);
+        if (currentSelection == 2)
+        {
+            cout << Color_Cyan << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+        moveCursorToPosition(thirdColumn, row + 1);
+        cout << "|   Back  |";
+        moveCursorToPosition(thirdColumn, row + 2);
+        if (currentSelection == 2)
+        {
+            cout << Color_Cyan << "***********" << Color_Reset;
+        }
+        else
+        {
+            cout << "-----------";
+        }
+
+        // Footer instructions
+        string footer = "Use Side Arrow Keys to Navigate Buttons";
+        moveCursorToPosition((G_columns - footer.length()) / 2, row + 4);
+        cout << Color_Green << footer << Color_Reset;
+
+        // Wait for user input
+        int key = _getch();
+
+        // Arrow key handling
+        if (key == 224)
+        {
+            key = _getch(); // Get the actual key code
+            if (key == LEFT_ARROW)
+            {
+                currentSelection = (currentSelection + 2) % 3; // Move left, wrap around
+            }
+            else if (key == RIGHT_ARROW)
+            {
+                currentSelection = (currentSelection + 1) % 3; // Move right, wrap around
+            }
+        }
+
+        // Enter key to confirm selection
+        if (key == ENTER_KEY)
+        {
+            return currentSelection; // Return the selected button
+        }
+    }
+}
+
+string buttons(int row, int columns, const vector<string> &buttonLabels)
+
+{
+    const int LEFT_ARROW = 75;
+    const int RIGHT_ARROW = 77;
+    const int ENTER_KEY = 13;
+
+    int buttonCount = buttonLabels.size();
+    if (buttonCount < 3 || buttonCount > 4)
+    {
+        throw invalid_argument("Button count must be 3 or 4.");
+    }
+
+    int currentSelection = 0;
+
+    while (true)
+    {
+        // Clear previous buttons
+        for (int i = 0; i < buttonCount; ++i)
+        {
+            moveCursorToPosition(0, row + i * 3);
+            cout << string(columns, ' ');
+        }
+
+        // Draw buttons dynamically
+        for (int i = 0; i < buttonCount; ++i)
+        {
+            int buttonWidth = 12;
+            int buttonSpacing = columns / (buttonCount + 1);
+            int buttonX = buttonSpacing * (i + 1) - buttonWidth / 2;
+
+            // Set color based on selection
+            string color = (i == currentSelection) ? Color_Bright_Cyan : Color_White;
+
+            // Draw top border
+
+            // Draw label
+            moveCursorToPosition(buttonX, row + 1);
+            cout << color << "  " << buttonLabels[i] << "  " << Color_Reset;
+        }
+
+        // Wait for user input
+        int key = _getch();
+
+        // Arrow key handling
+        if (key == 224)
+        {
+            key = _getch(); // Get the actual key code
+            if (key == LEFT_ARROW)
+            {
+                currentSelection = (currentSelection - 1 + buttonCount) % buttonCount;
+            }
+            else if (key == RIGHT_ARROW)
+            {
+                currentSelection = (currentSelection + 1) % buttonCount;
+            }
+        }
+
+        // Enter key to confirm selection
+        if (key == ENTER_KEY)
+        {
+            return buttonLabels[currentSelection];
+        }
+    }
+}
+
+void fill(User userData, int rows, int columns) {
+    map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks("./src/game/gra.txt");
+    srand(static_cast<unsigned int>(time(0)));
+    int mrows = rows;
+
+    while (true) {
+        rows = mrows;
+        int stage[3] = {-1, -1, -1};
+        int sele = -1;
+        system("cls");
+        ThemeFormate(rows, columns);
+int attp = 0;
+        FillintheData FillintheUserData = getSingleUserFillintheData(userData.id, userData.name);
+        int level = levelSelection(rows, columns, 5, FillintheUserData.level);
+        system("cls");
+        ThemeFormate(rows, columns);
+        auto entry = sentences[level];
+        int totalSentences = sentences[level].size();
+        unordered_set<int> usedIndices;
+     
+        int stg = 0;
+        rows = rows / 2;
+
+        while (stg < 3) {
+            attp = 0;
+            int randomIndex;
+            do {
+                randomIndex = rand() % totalSentences;
+            } while (usedIndices.count(randomIndex));
+            usedIndices.insert(randomIndex);
+
+            const auto &entry = sentences[level][randomIndex];
+            string jumbledSentence = entry.first;
+            string trueSentence = entry.second[0];
+            vector<string> options = {entry.second[1], entry.second[2], entry.second[3], entry.second[4]};
+           
+            quetionis:
+                clearLines(rows - 10, rows + 11);
+                UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
+
+                int charCount = jumbledSentence.length();
+                moveCursorToPosition((columns - charCount) / 2, rows - 4);
+                cout << jumbledSentence;
+
+                string userSentence = buttons(rows, columns, options);
+
+                if (toLower(userSentence) == toLower(trueSentence)) {
+                    moveCursorToPosition((columns - 22) / 2, rows + 2);
+                    cout << "+---------------------+";
+                    moveCursorToPosition((columns - 22) / 2, rows + 3);
+                    cout << "|  Great! You Win!   |";
+                    moveCursorToPosition((columns - 22) / 2, rows + 4);
+                    cout << "+---------------------+";
+                    stage[stg++] = 10;
+                    
+                } else {
+                    if (attp<3){
+                        attp = attp + 1;
+                    }
+                    
+                 
+                    if (attp > 1) {
+                        
+                        moveCursorToPosition((columns - 35) / 2, rows + 2);
+                        cout << "+--------------------------------+";
+                        moveCursorToPosition((columns - 35) / 2, rows + 3);
+                        cout << "|  attempts done!     " << "Attempts :" + to_string(attp) + "   |";
+                        moveCursorToPosition((columns - 35) / 2, rows + 4);
+                        cout << "+--------------------------------+";
+                         
+
+                        _getch();
+                        break;
+                            
+                    } else {
+                       
+                       
+                        moveCursorToPosition((columns - 35) / 2, rows + 2);
+                        cout << "+--------------------------------+";
+                        moveCursorToPosition((columns - 35) / 2, rows + 3);
+                        cout << "|  Wrong Sentence! Try Again!     " << "Attempts :" + to_string(attp) + "   |";
+                        moveCursorToPosition((columns - 35) / 2, rows + 4);
+                        cout << "+--------------------------------+";
+                        sele = hintButtonsforfil(rows + 6);
+
+                        if (sele == 0){
+                            goto quetionis;
+                        }
+                            
+                        else if (sele == 1) {
+                            system("cls");
+                            return;
+                        } else if (sele == 2)
+                            break;
+                    }
+                 
+            }
+
+            if (sele == 3)
+                break;
+
+            if (stg >= 3) {
+            UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
+            char gameName[50] = "Fill In the Blanks";
+            int currentPlayScore = 0;
+            for (int i = 0; i < 3; ++i)
+                currentPlayScore += stage[i];
+            updateFillintheData(userData.id, userData.name, (level == FillintheUserData.level) ? FillintheUserData.level + 1 : FillintheUserData.level, FillintheUserData.score + currentPlayScore, (currentPlayScore == 30) ? FillintheUserData.coin + 1 : FillintheUserData.coin);
+            ScoreBoard(gameName, level, FillintheUserData.score, currentPlayScore, columns, rows);
+            level++;
+           _getch();
+            break;
+          
+        } else {
+            if (sele == 3)
+                break;
+        }
+        }
+
+        
+    }
+}
+
