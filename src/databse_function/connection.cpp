@@ -179,27 +179,49 @@ void updateUser(const string &searchName)
 }
 
 // Function to add a new user
-User addUser(string name,const string password)
+User addUser(string name, const string password)
 {
-    fstream file(USER_DATABASE, ios::app); 
-    name.erase(0, name.find_first_not_of(' '));
-    User userData = {-1," "," "," "};
-    if (file.is_open())
+    User userData = {-1, " ", " ", " "}; // Default userData initialization
+
+    try
     {
-        int id = getNextUserId();              
-        string joiningDate = getCurrentDate(); 
+        fstream file(USER_DATABASE, ios::app); 
+        if (!file.is_open())
+        {
+            throw runtime_error("Unable to open file."); // Explicitly throw an exception
+        }
+
+        // Trim leading whitespace from the name
+        name.erase(0, name.find_first_not_of(' '));
+
+        // Generate user ID and joining date
+        int id = getNextUserId();
+        string joiningDate = getCurrentDate();
+
+        // Write data to the file
         file << id << "," << joiningDate << "," << name << "," << password << endl;
         file.close();
+
+        // Populate the userData object
         userData.id = id;
         userData.joiningDate = joiningDate;
         userData.name = name;
         userData.password = password;
+
         return userData;
-    } else {
-        cout << "Unable to open file.\n";
     }
-    return userData;
+    catch (const exception &e) // Catch any exceptions derived from std::exception
+    {
+        cout << "An error occurred: " << e.what() << endl;
+    }
+    catch (...) // Catch any other unexpected exceptions
+    {
+        cout << "An unknown error occurred." << endl;
+    }
+
+    return userData; // Return the default userData in case of an error
 }
+
 
 vector<string> AllAvailableUsers() {
     vector<string> userName;

@@ -1703,7 +1703,7 @@ void fill(User userData, int rows, int columns) {
         int sele = -1;
         system("cls");
         ThemeFormate(rows, columns);
-int attp = 0;
+        int attp = 0;
         FillintheData FillintheUserData = getSingleUserFillintheData(userData.id, userData.name);
         int level = levelSelection(rows, columns, 5, FillintheUserData.level);
         system("cls");
