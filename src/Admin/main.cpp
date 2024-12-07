@@ -4,6 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <iomanip>
+#include "../colors.cpp"
 
 void AdmindisplayUsers()
 {
@@ -163,8 +164,8 @@ void displayMenu()
 using namespace std;
 
 // File names
-const string WORD_DATA_FILE = "WordScrumble_Words.txt";
-const string HINTS_DATA_FILE = "WordScrumble_Words_Hints.txt";
+const string WORD_DATA_FILE = "../game/WordScrumble_Words.txt";
+const string HINTS_DATA_FILE = "../game/WordScrumble_Words_Hints.txt";
 
 void addWordScrambleData()
 {
@@ -281,3 +282,10 @@ void adminPanel()
 }
 
 
+int main()
+{
+    adminPanel();
+        
+        return 0;
+}    
+    

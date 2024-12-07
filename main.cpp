@@ -14,6 +14,7 @@
 #include "src/databse_function/WordScrambleDatabase.cpp"
 #include "src/game/WordScramble.cpp"
 #include "src/Admin/main.cpp"
+
 struct Games
 {
     int index;
