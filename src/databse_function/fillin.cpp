@@ -21,6 +21,71 @@ struct FillintheData {
     int coin;
 };
 
+
+
+void fill_username_changes(int userId, const string &newName)
+{
+    ifstream inFile(Fillinthe);
+    if (!inFile.is_open())
+    {
+        cerr << "Failed to open the file for reading." << endl;
+        return;
+    }
+
+    vector<FillintheData> dataEntries;
+    string line;
+
+    while (getline(inFile, line))
+    {
+        stringstream ss(line);
+        FillintheData data;
+        string idStr, levelStr, scoreStr, coinStr;
+
+        getline(ss, idStr, ',');
+        getline(ss, data.Timestamp, ',');
+        getline(ss, data.modifyingTimestamp, ',');
+        getline(ss, data.name, ',');
+       
+        getline(ss, levelStr, ',');
+        getline(ss, scoreStr, ',');
+        getline(ss, coinStr, ',');
+
+        data.UserId = stoi(idStr);
+        data.level = stoi(levelStr);
+        data.score = stoi(scoreStr);
+        data.coin = stoi(coinStr);
+
+        if (data.UserId == userId)
+        {
+            data.name = newName;
+           
+            data.modifyingTimestamp = getTime();
+        }
+
+        dataEntries.push_back(data);
+    }
+    inFile.close();
+
+    ofstream outFile(Fillinthe);
+    if (!outFile.is_open())
+    {
+        cerr << "Failed to open the file for writing." << endl;
+        return;
+    }
+
+    for (const auto &entry : dataEntries)
+    {
+        outFile << entry.UserId << ","
+                << entry.Timestamp << ","
+                << entry.modifyingTimestamp << ","
+                << entry.name << ","
+                << entry.level << ","
+                << entry.score << ","
+                << entry.coin << endl;
+    }
+    outFile.close();
+}
+
 // Add Data 
 void addFillintheData(int userId, const string name, int level, int score, int coin)
 {

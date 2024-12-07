@@ -9,6 +9,10 @@
     "ostream": "cpp",
     "vector": "cpp",
     "format": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "chrono": "cpp",
+    "text_encoding": "cpp",
+    "typeinfo": "cpp",
+    "fstream": "cpp"
   }
 }

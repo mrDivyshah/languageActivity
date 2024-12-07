@@ -17,6 +17,8 @@
 
 #include "src/game/WordScramble.cpp"
 #include "src/Admin/main.cpp"
+
+
 struct Games
 {
     int index;
@@ -59,6 +61,9 @@ void sen(User userData, int rows, int columns);
 void grammarGame(User userData, int rows, int columns);
 
 void fill(User userData, int rows, int columns);
+
+
+#include "man.cpp"
 
 int main()
 {
@@ -729,7 +734,9 @@ void Home(int rows, int columns, User userData)
         {
             if (option.selected == gameListSize)
             {
-                cout << "Selected Menu";
+
+                ManageUserDataMenu(rows, columns, userData);
+
             }
             else if (option.selected == gameListSize + 1)
             {
@@ -758,6 +765,7 @@ void Home(int rows, int columns, User userData)
                         {
                             wordScramble(userData, rows, columns);
                         }
+                        
                     }
                     clearLines(13, rows - 10);
                 }
@@ -1409,7 +1417,7 @@ int hintButtonsforfil(int row)
     int secondColumn = 3 * (G_columns / 6) - 6; // Adjusted column spacing
     int thirdColumn = 5 * (G_columns / 6) - 12; // third button
 
-    int currentSelection = 0; // 0 -> Retry, 1 -> Exit, 2 -> Back
+    int currentSelection = 0; // 0 -> Re-try, 1 -> Exit, 2 -> Back
 
     while (true)
     {

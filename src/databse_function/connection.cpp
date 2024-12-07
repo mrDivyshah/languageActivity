@@ -178,6 +178,72 @@ void updateUser(const string &searchName)
     }
 }
 
+ 
+// this done by god
+
+
+void updateUsername(int userId, const std::string& newName) {
+    std::ifstream file(USER_DATABASE);
+    std::vector<std::string> lines;
+    std::string line;
+    while (std::getline(file, line)) {
+        size_t firstComma = line.find(',');
+        if (firstComma != std::string::npos) {
+            int id = std::stoi(line.substr(0, firstComma));
+            if (id == userId) {
+                size_t secondComma = line.find(',', firstComma + 1);
+                size_t thirdComma = line.find(',', secondComma + 1);
+                if (thirdComma != std::string::npos) {
+                    std::string joiningDate = line.substr(firstComma + 1, secondComma - firstComma - 1);
+                    std::string password = line.substr(thirdComma + 1);
+                    line = std::to_string(id) + "," + joiningDate + "," + newName + "," + password;
+                }
+            }
+        }
+        lines.push_back(line);
+    }
+    file.close();
+
+    std::ofstream outFile(USER_DATABASE);
+    for (const auto& l : lines) {
+        outFile << l << std::endl;
+    }
+    outFile.close();
+}
+
+void updatePassword(int userId, const std::string& newPassword) {
+    std::ifstream file(USER_DATABASE);
+    std::vector<std::string> lines;
+    std::string line;
+    while (std::getline(file, line)) {
+        size_t firstComma = line.find(',');
+        if (firstComma != std::string::npos) {
+            int id = std::stoi(line.substr(0, firstComma));
+            if (id == userId) {
+                size_t secondComma = line.find(',', firstComma + 1);
+                size_t thirdComma = line.find(',', secondComma + 1);
+                if (thirdComma != std::string::npos) {
+                    std::string joiningDate = line.substr(firstComma + 1, secondComma - firstComma - 1);
+                    std::string userName = line.substr(secondComma + 1, thirdComma - secondComma - 1);
+                    line = std::to_string(id) + "," + joiningDate + "," + userName + "," + newPassword;
+                }
+            }
+        }
+        lines.push_back(line);
+    }
+    file.close();
+
+    std::ofstream outFile(USER_DATABASE);
+    for (const auto& l : lines) {
+        outFile << l << std::endl;
+    }
+    outFile.close();
+}
+
+
+
+
+
 // Function to add a new user
 User addUser(string name,const string password)
 {
