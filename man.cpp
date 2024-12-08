@@ -102,12 +102,14 @@ bool printCenteredConfirmation(int rows, int columns, const string& message) {
 }
 
 int verifyPassword(int rows, int columns, User &userData) {
+    string password = "";
     clearScreen(rows, columns);
     ThemeFormate(rows, columns);
     moveCursorToPosition((columns - 20) / 2, rows / 2);
     cout << "Enter Your Password: ";
-    string password;
+     
     getline(cin, password);
+
     if (password != userData.password) {
         moveCursorToPosition((columns - 20) / 2, rows / 2 + 2);
         cout << Color_Red << "Incorrect Password!" << Color_Reset;
@@ -183,28 +185,40 @@ void ChangePasswordMenu(int rows, int columns, User &userData) {
        
        else{
          AlertMessage((rows / 2) + 3, columns / 2, "Error", "You selected No");
-         cout << "Entd " << xaa;
+          
          _getch();
        }
     }
 }}
 
 void ResetAllGamesMenu(int rows, int columns, User &userData) {
-    verifyPassword(rows, columns, userData);
-    clearScreen(rows, columns);
+    bool xaa;
+    if(verifyPassword(rows, columns, userData)){
+     clearScreen(rows, columns);
     ThemeFormate(rows, columns);
      clearScreen(rows, columns);
     ThemeFormate(rows, columns);
     moveCursorToPosition((columns - 20) / 2, rows / 2);
-    printCenteredConfirmation(rows, columns, "Are you sure you want to reset all games? (y/n): ");
-    updateSenData(userData.id, userData.name, 1, 0, 10);
-    updateFillintheData(userData.id, userData.name, 1, 0, 10);
-    updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
-    AlertMessage(rows + 2, columns / 2, "Success", "All Games Reset Successfully");
+    xaa = printCenteredConfirmation(rows, columns, "Are you sure you want to reset all games? (y/n): ");
+        if(xaa){
+                
+                updateSenData(userData.id, userData.name, 1, 0, 10);
+                updateFillintheData(userData.id, userData.name, 1, 0, 10);
+                updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
+                Message((rows / 2) + 3, columns / 2, "Success", "All Games Reset Successfully");
+        } else{
+         AlertMessage((rows / 2) + 3, columns / 2, "Error", "You selected No");
+          
+         _getch();
+       }
+    }
+    
+   
 }
 
 void ResetParticularGameMenu(int rows, int columns, User &userData) {
-    verifyPassword(rows, columns, userData);
+    bool xaa;
+ if(verifyPassword(rows, columns, userData)){
     clearScreen(rows, columns);
     ThemeFormate(rows, columns);
     int gameIndex = Homergame(rows, columns, 0);
@@ -212,7 +226,10 @@ void ResetParticularGameMenu(int rows, int columns, User &userData) {
          clearScreen(rows, columns);
     ThemeFormate(rows, columns);
     moveCursorToPosition((columns - 20) / 2, rows / 2);
-        printCenteredConfirmation(rows, columns, "Are you sure you want to reset this game? (y/n): ");
+
+        xaa = printCenteredConfirmation(rows, columns, "Are you sure you want to reset this game? (y/n): ");
+        if(xaa){
+      
         switch (gameIndex) {
             case 0: // Sentence Scramble
                 updateSenData(userData.id, userData.name, 1, 0, 10);
@@ -227,10 +244,16 @@ void ResetParticularGameMenu(int rows, int columns, User &userData) {
                 updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
                 break;
         }
-         clearScreen(rows, columns);
-    ThemeFormate(rows, columns);
-    moveCursorToPosition((columns - 20) / 2, rows / 2);
-        AlertMessage(rows / 2 , (columns - 20) / 2, "Success", "Game Reset Successfully");
+    //      clearScreen(rows, columns);
+    // ThemeFormate(rows, columns);
+    // moveCursorToPosition((columns - 20) / 2, rows / 2);
+        Message((rows / 2) + 3, columns / 2, "Success", "Game Reset Successfully");
+    } else{
+         AlertMessage((rows / 2) + 3, columns / 2, "Error", "You selected No");
+          
+         _getch();
+       }
+    }
     }
 }
 
@@ -300,6 +323,8 @@ void ManageUserDataMenu(int rows, int columns, User &userData) {
                     ResetParticularGameMenu(rows, columns, userData);
                     break;
                 case 4:
+                    clearScreen(rows, columns);
+                    ThemeFormate(rows, columns);
                     return; // Back to main menu
             }
         }

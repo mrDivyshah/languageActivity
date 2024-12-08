@@ -717,6 +717,8 @@ int HomerMenu(int rows, int columns, int selected)
 
 void Home(int rows, int columns, User userData)
 {
+    
+     clearLines(13, rows - 10);
     ThemeFormate(G_rows, G_columns);
     int gameListSize = gameList.size();
     struct HomeMenu
@@ -725,9 +727,13 @@ void Home(int rows, int columns, User userData)
         string MenuItem;
     };
     int selected = 0;
+ 
+     
     HomerMenu(rows, columns, selected);
     while (true)
     {
+        
+     
         UserHeader("User Name : " + userData.name + " [" + to_string(userData.id) + "]      Joined On: " + userData.joiningDate, columns, 0, false, "", "");
         SelectionValue option = Selection(selected, gameListSize);
         if (option.enterPressed)
@@ -773,6 +779,7 @@ void Home(int rows, int columns, User userData)
         }
 
         selected = option.selected;
+
         HomerMenu(rows, columns, option.selected);
     }
 }
