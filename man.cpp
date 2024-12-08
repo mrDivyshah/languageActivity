@@ -173,7 +173,9 @@ void ChangePasswordMenu(int rows, int columns, User &userData) {
     xaa = printCenteredConfirmation(rows, columns, "Are you sure you want to change your password? (y/n): ");
         if(xaa){
              updatePassword(userData.id, newPassword);
-             
+             userData.password = newPassword;
+            
+                
 
              Message((rows / 2) + 3, columns / 2, "Success", "Password Updated Successfully");
              return;
