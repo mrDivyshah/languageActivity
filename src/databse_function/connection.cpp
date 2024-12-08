@@ -10,13 +10,15 @@ using namespace std;
 #define USER_DATABASE getCurrentDirectory() + "/database/user.txt"
 #define STATUS_DATABASE getCurrentDirectory() + "/database/status.txt"
 
-struct User {
-    int id; 
+struct User
+{
+    int id;
     string joiningDate;
     string name;
     string password;
 };
-struct Status {
+struct Status
+{
     int id;
     string timeStamp;
     string name;
@@ -84,8 +86,8 @@ bool validateUser(const string &name, const string &password)
 
         // Read the data from the line
         ss >> id;
-        getline(ss, joiningDate, ','); // Get joiningDate
-        getline(ss, existingName, ','); // Get name
+        getline(ss, joiningDate, ',');      // Get joiningDate
+        getline(ss, existingName, ',');     // Get name
         getline(ss, existingPassword, ','); // Get password
 
         // Trim leading whitespace for name
@@ -115,12 +117,12 @@ bool userExists(const string &name)
         string existingName, password;
 
         // Read the data from the line
-        ss >> id ;
+        ss >> id;
 
         // Read the remaining line as existingName (to capture full name)
-         getline(ss, joiningDate, ',');  // Get joiningDate
-         getline(ss, existingName, ',');         // Get name
-         getline(ss, password, ',');     // Get password
+        getline(ss, joiningDate, ',');  // Get joiningDate
+        getline(ss, existingName, ','); // Get name
+        getline(ss, password, ',');     // Get password
 
         // Trim leading whitespace
         existingName.erase(0, existingName.find_first_not_of(' '));
@@ -182,13 +184,12 @@ void updateUser(const string &searchName)
 User addUser(string name, const string password)
 {
     User userData = {-1, " ", " ", " "}; // Default userData initialization
-
     try
     {
-        fstream file(USER_DATABASE, ios::app); 
+        fstream file(USER_DATABASE, ios::app);
         if (!file.is_open())
         {
-            throw runtime_error("Unable to open file."); // Explicitly throw an exception
+                throw runtime_error("Unable to open file."); // Explicitly throw an exception
         }
 
         // Trim leading whitespace from the name
@@ -222,24 +223,29 @@ User addUser(string name, const string password)
     return userData; // Return the default userData in case of an error
 }
 
-
-vector<string> AllAvailableUsers() {
+vector<string> AllAvailableUsers()
+{
     vector<string> userName;
     string line, str, name, password;
     fstream file(USER_DATABASE, ios::in);
-    if (file.is_open()) {
-        while (getline(file, line)) {
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
             stringstream ss(line);
             getline(ss, str, ',');
             getline(ss, str, ',');
             getline(ss, name, ',');
             getline(ss, password);
             name.erase(0, name.find_first_not_of(' '));
-            if (!name.empty()) {
+            if (!name.empty())
+            {
                 userName.push_back(name);
             }
         }
-    } else {
+    }
+    else
+    {
         return {};
     }
     file.close();
@@ -251,36 +257,39 @@ int getUserCount()
     int count = 0;
     for (string user : AllAvailableUsers())
     {
-         if (!user.empty())
-            {
-                count++;
-            }
-            else
-            {
-                return 0;
-            }
+        if (!user.empty())
+        {
+            count++;
+        }
+        else
+        {
+            return 0;
+        }
     }
-    return count-1;
+    return count - 1;
 }
 
 User userDataUsingUserIndex(int U_ID)
 {
-  ifstream file(USER_DATABASE);
+    ifstream file(USER_DATABASE);
     string line;
     int index = 0;
     string name, joiningDate, id, password;
 
     User userData = {-1, "", "", ""};
 
-    if (file.is_open()) {
-        while (getline(file, line)) {
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
             stringstream ss(line);
             getline(ss, id, ',');
             getline(ss, joiningDate, ',');
             getline(ss, name, ',');
             getline(ss, password);
-            name.erase(0, name.find_first_not_of(' ')); 
-            if (index == U_ID) {
+            name.erase(0, name.find_first_not_of(' '));
+            if (index == U_ID)
+            {
                 userData.id = stoi(id);
                 userData.joiningDate = joiningDate;
                 userData.name = name;
@@ -291,26 +300,29 @@ User userDataUsingUserIndex(int U_ID)
         }
         file.close();
     }
-    return userData; 
+    return userData;
 }
 
 User searchUser(const string searchName)
 {
     ifstream file(USER_DATABASE);
     string line;
-    string name, joiningDate,password,id;
+    string name, joiningDate, password, id;
 
     User userData = {-1, "", "", ""};
 
-    if (file.is_open()) {
-        while (getline(file, line)) {
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
             stringstream ss(line);
             getline(ss, id, ',');
             getline(ss, joiningDate, ',');
             getline(ss, name, ',');
             getline(ss, password);
-            name.erase(0, name.find_first_not_of(' ')); 
-            if (name == searchName) {
+            name.erase(0, name.find_first_not_of(' '));
+            if (name == searchName)
+            {
                 userData.id = stoi(id);
                 userData.joiningDate = joiningDate;
                 userData.name = name;
@@ -320,15 +332,17 @@ User searchUser(const string searchName)
         }
         file.close();
     }
-    return userData; 
+    return userData;
 }
 
-Status addStatus(int id, string name, int level){
+Status addStatus(int id, string name, int level)
+{
     fstream file(STATUS_DATABASE, ios::app);
     name.erase(0, name.find_first_not_of(' '));
-    Status statusData = {-1," "," ", -1 };
-    if (file.is_open()) {              
-        string Date = getCurrentDate(); 
+    Status statusData = {-1, " ", " ", -1};
+    if (file.is_open())
+    {
+        string Date = getCurrentDate();
         file << id << "," << Date << "," << name << "," << level << endl;
         file.close();
         statusData.id = id;
@@ -336,7 +350,9 @@ Status addStatus(int id, string name, int level){
         statusData.name = name;
         statusData.level = level;
         return statusData;
-    } else {
+    }
+    else
+    {
         cout << "Unable to open file.\n";
     }
     return statusData;
