@@ -1,3 +1,32 @@
+void Message(int rows, int columns, string type, string msg)
+{
+    int boxWidth = msg.length() + 8; // Adding padding to message box
+    int boxHeight = 3, key;          // Top border, message row, bottom border
+    cout << Color_Bright_Green;
+    // Draw the top border
+    moveCursorToPosition(columns - (boxWidth / 2), rows);
+    cout << "* " << string(boxWidth - 4, '-') << " *";
+
+    // Draw the message line with side borders
+    moveCursorToPosition(columns - (boxWidth / 2), rows + 1);
+    cout << "|   " << msg << "   |";
+
+    // Draw the bottom border
+    moveCursorToPosition(columns - (boxWidth / 2), rows + 2);
+    cout << "* " << string(boxWidth - 4, '-') << " *";
+    cout << Color_Reset;
+    while (true)
+    {
+        key = _getch();
+        if (key == 13)
+        {
+            clearLines(rows, rows + 3);
+            break;
+        }
+    }
+}
+
+
 int Homergame(int rows, int columns, int selected) {
     int box_column = 42;
     int row = (columns > 125 && rows > 35) ? 20 : 11; // Dynamic row positioning
@@ -5,34 +34,27 @@ int Homergame(int rows, int columns, int selected) {
     while (true) {
         clearLines(row - 1, row + gameList.size() + 3);
 
-        moveCursorToPosition((columns - 43) / 2, row);
-        cout << "+";
-        for (int i = 0; i <= box_column - 2; i++)
-            cout << "-";
-        cout << "+";
+        moveCursorToPosition((columns - box_column) / 2, row);
+        cout << "+-----------------------------------------+";
 
-        moveCursorToPosition((columns - 43) / 2, row + 1);
-        cout << "|";
-        moveCursorToPosition((columns - 32) / 2, row + 1);
-        cout << "[-] Select Game";
-        moveCursorToPosition((columns + 41) / 2, row + 1);
-        cout << "|";
+        moveCursorToPosition((columns - box_column) / 2, row + 1);
+        cout << "| [-] Select Game                         |";
 
-        moveCursorToPosition((columns - 43) / 2, row + 2);
+        moveCursorToPosition((columns - box_column) / 2, row + 2);
         cout << "+-----------------------------------------+";
 
         int count = 0;
         for (const auto &DSgame : gameList) {
-            moveCursorToPosition((columns - 43) / 2, row + 3 + count);
-            cout << "|";
+            moveCursorToPosition((columns - box_column) / 2, row + 3 + count);
+            cout << "| ";
             moveCursorToPosition((columns - 34) / 2, row + 3 + count);
             cout << (selected == count ? Color_Green + ">> " : Color_Bright_Black + "   ") << DSgame.name << Color_Reset;
             moveCursorToPosition((columns + 41) / 2, row + 3 + count);
-            cout << "|";
+            cout << " |";
             count++;
         }
 
-        moveCursorToPosition((columns - 43) / 2, row + 3 + count);
+        moveCursorToPosition((columns - box_column) / 2, row + 3 + count);
         cout << "+-----------------------------------------+";
 
         int key = _getch(); // Capture key press
@@ -48,30 +70,186 @@ int Homergame(int rows, int columns, int selected) {
     }
 }
 
-void ManageUserDataMenu(int rows, int columns, User userData) {
+void clearScreen(int rows, int columns) {
+    for (int i = 0; i < rows; ++i) {
+        cout << "\033[" << (i + 1) << ";1H";
+        cout << "\033[K";
+    }
+}
+
+void printCenteredMessage(int rows, int columns, const string& message) {
+    int row = rows / 2;
+    int col = (columns - message.length()) / 2;
+    moveCursorToPosition(col, row);
+    cout << message;
+}
+
+bool printCenteredConfirmation(int rows, int columns, const string& message) {
+    int row = rows / 2;
+    int col = (columns - message.length()) / 2;
+    moveCursorToPosition(col, row);
+    cout << message;
+    
+    char choice;
+    cin >> choice;
+    if (choice != 'y' && choice != 'Y') {
+        return false;
+    }
+    else  {
+        return true;
+    }
+
+}
+
+int verifyPassword(int rows, int columns, User &userData) {
+    clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2, rows / 2);
+    cout << "Enter Your Password: ";
+    string password;
+    getline(cin, password);
+    if (password != userData.password) {
+        moveCursorToPosition((columns - 20) / 2, rows / 2 + 2);
+        cout << Color_Red << "Incorrect Password!" << Color_Reset;
+        _getch();
+      return false;
+    }
+    else {
+        return true;
+    }
+}
+
+void UpdateUsernameMenu(int rows, int columns, User &userData) {
+    if(verifyPassword(rows, columns, userData)){
+        clearScreen(rows, columns);
+            ThemeFormate(rows, columns);
+        moveCursorToPosition((columns - 20) / 2, rows / 2);
+            cout << "Enter New Username: ";
+            string newUsername;
+           moveCursorToPosition(((columns -20 ) / 2) + 20, rows / 2);
+            getline(cin, newUsername);  
+            User existingUser = searchUser(newUsername);
+            if (existingUser.id != -1) {
+                AlertMessage(rows + 2, columns / 2, "Error", "Username Already Taken");
+            } else {
+                word_username_changes(userData.id, newUsername);
+                sentence_username_changes(userData.id, newUsername);
+                fill_username_changes(userData.id, newUsername);
+                updateUsername(userData.id, newUsername);
+                userData.name = newUsername;
+
+                Message((rows / 2) + 3, columns / 2, "Success", "Username Updated Successfully");
+            }
+    }
+    else{
+        clearScreen(rows, columns);
+        ThemeFormate(rows, columns);
+        moveCursorToPosition((columns - 20) / 2, rows / 2);
+        cout << "password is wrong ";
+
+        
+    }
+   
+}
+
+void ChangePasswordMenu(int rows, int columns, User &userData) {
+    bool xaa;
+     string newPassword = "";
+    if(verifyPassword(rows, columns, userData)){
+    clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2, rows / 2);
+    cout << "Enter New Password: ";
+    
+   
+    moveCursorToPosition(((columns -20 ) / 2) + 20, rows / 2);
+    getline(cin, newPassword);
+    if (newPassword.length() <= 6) {
+        AlertMessage((rows / 2) + 3, columns / 2, "Error", "Password Too Short");
+    } else {
+         clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2 , rows / 2);
+    xaa = printCenteredConfirmation(rows, columns, "Are you sure you want to change your password? (y/n): ");
+        if(xaa){
+             updatePassword(userData.id, newPassword);
+             
+
+             Message((rows / 2) + 3, columns / 2, "Success", "Password Updated Successfully");
+             return;
+        }
+       
+       else{
+         AlertMessage((rows / 2) + 3, columns / 2, "Error", "You selected No");
+         cout << "Entd " << xaa;
+         _getch();
+       }
+    }
+}}
+
+void ResetAllGamesMenu(int rows, int columns, User &userData) {
+    verifyPassword(rows, columns, userData);
+    clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+     clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2, rows / 2);
+    printCenteredConfirmation(rows, columns, "Are you sure you want to reset all games? (y/n): ");
+    updateSenData(userData.id, userData.name, 1, 0, 10);
+    updateFillintheData(userData.id, userData.name, 1, 0, 10);
+    updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
+    AlertMessage(rows + 2, columns / 2, "Success", "All Games Reset Successfully");
+}
+
+void ResetParticularGameMenu(int rows, int columns, User &userData) {
+    verifyPassword(rows, columns, userData);
+    clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    int gameIndex = Homergame(rows, columns, 0);
+    if (gameIndex < gameList.size()) {
+         clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2, rows / 2);
+        printCenteredConfirmation(rows, columns, "Are you sure you want to reset this game? (y/n): ");
+        switch (gameIndex) {
+            case 0: // Sentence Scramble
+                updateSenData(userData.id, userData.name, 1, 0, 10);
+                break;
+            case 1: // Grammar Game
+                // Logic for resetting Grammar Game
+                break;
+            case 2: // Fill In the blanks
+                updateFillintheData(userData.id, userData.name, 1, 0, 10);
+                break;
+            case 3: // Word Scramble
+                updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
+                break;
+        }
+         clearScreen(rows, columns);
+    ThemeFormate(rows, columns);
+    moveCursorToPosition((columns - 20) / 2, rows / 2);
+        AlertMessage(rows / 2 , (columns - 20) / 2, "Success", "Game Reset Successfully");
+    }
+}
+
+void ManageUserDataMenu(int rows, int columns, User &userData) {
     int selected = 0; // Currently selected option
     int menuCount = 5; // Total number of menu options
     int box_column = 42; // Width of the menu box
     int row = (columns > 125 && rows > 35) ? 20 : 11; // Dynamic row positioning
 
     while (true) {
-        clearLines(rows - 12, rows + 12);
+        clearScreen(rows, columns);
+        ThemeFormate(rows, columns);
 
         // Draw menu box
-        moveCursorToPosition((columns - 43) / 2, row);
-        cout << "+";
-        for (int i = 0; i <= box_column - 2; i++)
-            cout << "-";
-        cout << "+";
+        moveCursorToPosition((columns - box_column) / 2, row);
+        cout << "+-----------------------------------------+";
 
-        moveCursorToPosition((columns - 43) / 2, row + 1);
-        cout << "|";
-        moveCursorToPosition((columns - 32) / 2, row + 1);
-        cout << "[-] Manage User Data";
-        moveCursorToPosition((columns + 41) / 2, row + 1);
-        cout << "|";
+        moveCursorToPosition((columns - box_column) / 2, row + 1);
+        cout << "| [-] Manage User Data                    |";
 
-        moveCursorToPosition((columns - 43) / 2, row + 2);
+        moveCursorToPosition((columns - box_column) / 2, row + 2);
         cout << "+-----------------------------------------+";
 
         // Menu options
@@ -84,15 +262,15 @@ void ManageUserDataMenu(int rows, int columns, User userData) {
         };
 
         for (int i = 0; i < menuCount; i++) {
-            moveCursorToPosition((columns - 43) / 2, row + 3 + i);
-            cout << "|";
+            moveCursorToPosition((columns - box_column) / 2, row + 3 + i);
+            cout << "| ";
             moveCursorToPosition((columns - 32) / 2, row + 3 + i);
             cout << (selected == i ? Color_Green + ">> " : Color_Bright_Black + "   ") << menuOptions[i] << Color_Reset;
             moveCursorToPosition((columns + 41) / 2, row + 3 + i);
-            cout << "|";
+            cout << " |";
         }
 
-        moveCursorToPosition((columns - 43) / 2, row + 3 + menuCount);
+        moveCursorToPosition((columns - box_column) / 2, row + 3 + menuCount);
         cout << "+-----------------------------------------+";
 
         // Get user input for navigation
@@ -105,72 +283,22 @@ void ManageUserDataMenu(int rows, int columns, User userData) {
                 selected = (selected + 1) % menuCount;
         } else if (key == 13) { // Enter key
             // Handle menu option selection
-            if (selected == 0) {
-                // Update Username
+            switch (selected) {
+                case 0:
                 
-                cout << "Enter New Username: ";
-                string newUsername;
-                cin >> newUsername;
-                User existingUser = searchUser(newUsername);
-                if (existingUser.id != -1) {
-                    AlertMessage(rows + 5, columns / 2, "Error", "Username Already Taken");
-                } else {
-                           word_username_changes(userData.id, newUsername);
-                    sentence_username_changes(userData.id, newUsername);
-                    fill_username_changes(userData.id, newUsername);
-                    
-                    updateUsername(userData.id, newUsername);
-
-                    
-                    AlertMessage(rows + 5, columns / 2, "Success", "Username Updated Successfully It will visible when restart the game");
-                  
-                    
-                }
-            } else if (selected == 1) {
-                
-                cout << "Enter New Password: ";
-                string newPassword;
-                cin >> newPassword;
-                if (newPassword.length() <= 6) {
-                    AlertMessage(rows + 5, columns / 2, "Error", "Password Too Short");
-                } else {
-                         
-
-                    updatePassword(userData.id, newPassword);
-                    AlertMessage(rows + 5, columns / 2, "Success", "Password Updated Successfully");
-                }
-            } else if (selected == 2) {
-                // Reset All Games
-             AlertMessage(rows + 5, columns / 2, "Warning", "All Games will be reset");
-                _getch();
-                updateSenData(userData.id, userData.name, 1, 0, 10);
-                updateFillintheData(userData.id, userData.name, 1, 0, 10);
-                updateWordScrambleData(userData.id, userData.name, 1, 0, 10);
-                
-            } else if (selected == 3) {
-                clearLines(rows - 12, rows + 12);
-                int gameIndex = Homergame(rows, columns, 0);
-                
-                if (gameIndex < gameList.size()) {
-                    switch (gameIndex) {
-                        case 0: // Sentence Scramble
-                            updateSenData(userData.id, userData.name, 1, 1, 10);
-                            break;
-                        case 1: // Grammar Game
-                            // Logic for resetting Grammar Game
-                            break;
-                        case 2: // Fill In the blanks
-                            updateFillintheData(userData.id, userData.name, 1, 1, 10);
-                            break;
-                        case 3: // Word Scramble
-                            updateWordScrambleData(userData.id, userData.name, 1, 1, 10);
-                            break;
-                    }
-                    AlertMessage(rows + 5, columns / 2, "Success", "Game Reset Successfully");
-                }
-            } else if (selected == 4) {
-                // Back
-                break;
+                    UpdateUsernameMenu(rows, columns, userData);
+                    break;
+                case 1:
+                    ChangePasswordMenu(rows, columns, userData);
+                    break;
+                case 2:
+                    ResetAllGamesMenu(rows, columns, userData);
+                    break;
+                case 3:
+                    ResetParticularGameMenu(rows, columns, userData);
+                    break;
+                case 4:
+                    return; // Back to main menu
             }
         }
     }
