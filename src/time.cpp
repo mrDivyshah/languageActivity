@@ -53,3 +53,22 @@ string getTime() {
        
     return ss.str();
 }
+
+
+void time()
+{
+    time_t now = time(0);
+
+    // Convert time_t to tm structure for local timezone
+    tm *local_time = localtime(&now);
+    cout << local_time->tm_hour;
+    // Display the date and time in a formatted way
+    cout << "Current Date and Time: ";
+    cout << 1900 + local_time->tm_year << "-" // Year
+         << 1 + local_time->tm_mon << "-"     // Month (0-11, so add 1)
+         << local_time->tm_mday << " "        // Day of the month
+         << local_time->tm_hour << ":"        // Hours
+         << local_time->tm_min << ":"         // Minutes
+         << local_time->tm_sec                // Seconds
+         << endl;
+}

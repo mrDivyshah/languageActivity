@@ -16,6 +16,7 @@
 #include "src/databse_function/fillin.cpp"
 #include "src/game/WordScramble.cpp"
 #include "src/game/SentenceJumbble.cpp"
+#include "src/game/fillingTheBlanks.cpp"
 #include "src/Admin/main.cpp"
 #include "src/themeFormat.cpp"
 
@@ -45,9 +46,6 @@ int menuSelectionPrint(int rows, int columns);
 void clearLines(int startRow, int endRow);
 void AlertMessage(int rows, int coumns, string type, string msg);
 SelectionValue Selection(int selected, int total);
-void ScoreBoard();
-void time();
-void LoginUser();
 void Home(int rows, int columns, User userData);
 void wordScramble(User userData, int rows, int columns);
 void printLine(char start, char mid, char end, int widths[], int numCols, char fill);
@@ -108,24 +106,6 @@ int main()
     // moveCursorToPosition(0, rows);
 
     _getch();
-}
-
-void time()
-{
-    time_t now = time(0);
-
-    // Convert time_t to tm structure for local timezone
-    tm *local_time = localtime(&now);
-    cout << local_time->tm_hour;
-    // Display the date and time in a formatted way
-    cout << "Current Date and Time: ";
-    cout << 1900 + local_time->tm_year << "-" // Year
-         << 1 + local_time->tm_mon << "-"     // Month (0-11, so add 1)
-         << local_time->tm_mday << " "        // Day of the month
-         << local_time->tm_hour << ":"        // Hours
-         << local_time->tm_min << ":"         // Minutes
-         << local_time->tm_sec                // Seconds
-         << endl;
 }
 
 User LoginUser(int columns, int rows)
@@ -607,7 +587,6 @@ int HomerMenu(int rows, int columns, int selected)
 
 void Home(int rows, int columns, User userData)
 {
-    ThemeFormat(G_rows, G_columns);
     int gameListSize = gameList.size();
     struct HomeMenu
     {
@@ -615,9 +594,10 @@ void Home(int rows, int columns, User userData)
         string MenuItem;
     };
     int selected = 0;
-    HomerMenu(rows, columns, selected);
+    ThemeFormat(G_rows, G_columns);
     while (true)
     {
+        HomerMenu(rows, columns, selected);
         UserHeader("User Name : " + userData.name + " [" + to_string(userData.id) + "]      Joined On: " + userData.joiningDate, columns, 0, false, "", "");
         SelectionValue option = Selection(selected, gameListSize);
         if (option.enterPressed)
@@ -650,6 +630,7 @@ void Home(int rows, int columns, User userData)
                         {
                             fill(userData, rows, columns);
                         }
+                        ThemeFormat(G_rows, G_columns);
                     }
                     clearLines(13, rows - 10);
                 }
@@ -657,7 +638,6 @@ void Home(int rows, int columns, User userData)
         }
 
         selected = option.selected;
-        HomerMenu(rows, columns, option.selected);
     }
 }
 
@@ -877,6 +857,7 @@ void wordScramble(User userData, int rows, int columns)
     map<int, vector<pair<string, vector<string>>>> words = vocabulary;
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
+    WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
     while (true)
     {
         rows = mrows;
@@ -884,7 +865,6 @@ void wordScramble(User userData, int rows, int columns)
         int sele = -1;
         system("cls");
         ThemeFormat(rows, columns);
-        WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
         int level = levelSelection(rows, columns, 5, WordScrambleUserData.level);
         system("cls");
         ThemeFormat(rows, columns);
@@ -895,6 +875,7 @@ void wordScramble(User userData, int rows, int columns)
         int hintCount = 0;
         int stg = 0;
         rows = rows / 2;
+        bool hintUse = false;
         while (sele <= 3)
         {
             for (const auto &entry : words[level])
@@ -903,7 +884,6 @@ void wordScramble(User userData, int rows, int columns)
                 {
                     string MyWord = entry.first;
                     string wordIntr = shuffleLetter(MyWord);
-                    bool hintUse = false;
                     while (1)
                     {
                         WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
@@ -940,6 +920,7 @@ void wordScramble(User userData, int rows, int columns)
                             if (hintUse == true)
                             {
                                 stage[stg++] = 5;
+                                hintUse = false;
                             }
                             else
                             {
@@ -983,6 +964,7 @@ void wordScramble(User userData, int rows, int columns)
             }
             if (stg >= 3)
             {
+                WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
                 UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Word Scramble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
                 char gameName[50] = "Word Scramble";
                 int currentPlayScore = 0;
@@ -990,7 +972,7 @@ void wordScramble(User userData, int rows, int columns)
                 {
                     currentPlayScore += stage[i];
                 }
-                updateWordScrambleData(userData.id, userData.name, (level == WordScrambleUserData.level) ? WordScrambleUserData.level + 1 : WordScrambleUserData.level, WordScrambleUserData.score + currentPlayScore, (currentPlayScore == 30) ? WordScrambleUserData.coin + 1 : WordScrambleUserData.coin);
+                updateWordScrambleData(userData.id, userData.name, (level == WordScrambleUserData.level) ? WordScrambleUserData.level + 1 : WordScrambleUserData.level, WordScrambleUserData.score + currentPlayScore, currentPlayScore == 30 ? WordScrambleUserData.coin + 1 : WordScrambleUserData.coin);
                 ScoreBoard(gameName, level, WordScrambleUserData.score, currentPlayScore, columns, rows);
                 level++;
                 _getch();
@@ -1180,7 +1162,7 @@ void CrossWords(User userData, int rows, int columns)
         int hintCount = 0;
         int stg = 0;
         rows = rows / 2;
-
+        bool hintUsed = false;
         while (sele <= 3)
         {
 
@@ -1192,7 +1174,6 @@ void CrossWords(User userData, int rows, int columns)
                     const int MAX_SENTENCES = 10; // Maximum capacity for the array
                     int in[MAX_SENTENCES];        // Array to store used random indices
                     int inSize = 0;
-                    bool hintUsed = false;
                     while (1)
                     {
 
@@ -1268,6 +1249,7 @@ void CrossWords(User userData, int rows, int columns)
                             moveCursorToPosition(columns, rows - 22);
                             sele = -1;
                             stage[stg++] = hintUsed == true ? 5 : 10;
+                            hintUsed = false;
                             break;
                         }
                         else
@@ -1329,42 +1311,7 @@ void CrossWords(User userData, int rows, int columns)
     }
 }
 
-// Shuffle Words Code started -----------+++++++++++++---------
-
-map<int, vector<pair<string, vector<string>>>> loadfillintheblanks(const string &filename)
-{
-    map<int, vector<pair<string, vector<string>>>> vocabulary;
-    ifstream file(filename);
-
-    if (!file.is_open())
-    {
-        cerr << "Error: Unable to open file " << filename << endl;
-        return vocabulary;
-    }
-
-    string line;
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        string levelStr, question, op1, op2, op3, op4, answer;
-
-        // Read level, question, options, and answer
-        if (getline(ss, levelStr, ',') && getline(ss, question, ',') &&
-            getline(ss, op1, ',') && getline(ss, op2, ',') &&
-            getline(ss, op3, ',') && getline(ss, op4, ',') &&
-            getline(ss, answer, ','))
-        {
-
-            int level = stoi(levelStr); // Convert level to integer
-            string formattedQuestion = question + " (" + op1 + ", " + op2 + ", " + op3 + ", " + op4 + ")";
-            vector<string> options = {answer, op1, op2, op3, op4};
-            vocabulary[level].emplace_back(formattedQuestion, options);
-        }
-    }
-
-    file.close();
-    return vocabulary;
-}
+// filling the blnks Code started -----------+++++++++++++---------
 
 int hintButtonsforfil(int row)
 {
@@ -1547,7 +1494,7 @@ string buttons(int row, int columns, const vector<string> &buttonLabels)
 
 void fill(User userData, int rows, int columns)
 {
-    map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks("./src/game/gra.txt");
+    map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks();
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
 
@@ -1576,7 +1523,7 @@ void fill(User userData, int rows, int columns)
             do
             {
                 randomIndex = rand() % totalSentences;
-            } while (usedIndices.count(randomIndex)); 
+            } while (usedIndices.count(randomIndex));
             usedIndices.insert(randomIndex);
 
             const auto &entry = sentences[level][randomIndex];
