@@ -33,7 +33,7 @@ struct SelectionValue
 };
 
 vector<Games> gameList = {
-    {1, "CrossWords", "Hangman"},
+    {1, "Cross Words", "Hangman"},
     // {2, "Puzal Alfa", "Puzal"},
     {2, "Word Scramble", "wordScramble"},
     {3, "Fill in the blanks", "Blanks"}};
@@ -1485,7 +1485,7 @@ string buttons(int row, int columns, const vector<string> &buttonLabels)
     const int LEFT_ARROW = 75;
     const int RIGHT_ARROW = 77;
     const int ENTER_KEY = 13;
-
+    char alpha[4] = {'A', 'B', 'C', 'D'};
     int buttonCount = buttonLabels.size();
     if (buttonCount < 3 || buttonCount > 4)
     {
@@ -1517,7 +1517,7 @@ string buttons(int row, int columns, const vector<string> &buttonLabels)
 
             // Draw label
             moveCursorToPosition(buttonX, row + 1);
-            cout << color << "  " << buttonLabels[i] << "  " << Color_Reset;
+            cout << color << "(" << alpha[i] << ") " << buttonLabels[i] << Color_Reset;
         }
 
         // Wait for user input
@@ -1569,7 +1569,6 @@ void fill(User userData, int rows, int columns)
 
         int stg = 0;
         rows = rows / 2;
-
         while (stg < 3)
         {
             attp = 0;
@@ -1577,7 +1576,7 @@ void fill(User userData, int rows, int columns)
             do
             {
                 randomIndex = rand() % totalSentences;
-            } while (usedIndices.count(randomIndex));
+            } while (usedIndices.count(randomIndex)); 
             usedIndices.insert(randomIndex);
 
             const auto &entry = sentences[level][randomIndex];
@@ -1585,7 +1584,6 @@ void fill(User userData, int rows, int columns)
             string trueSentence = entry.second[0];
             vector<string> options = {entry.second[1], entry.second[2], entry.second[3], entry.second[4]};
 
-        quetionis:
             clearLines(rows - 10, rows + 11);
             UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
 
@@ -1593,7 +1591,7 @@ void fill(User userData, int rows, int columns)
             moveCursorToPosition((columns - charCount) / 2, rows - 4);
             cout << jumbledSentence;
 
-            string userSentence = buttons(rows, columns, options);
+            string userSentence = buttons(rows - 2, columns, options);
 
             if (toLower(userSentence) == toLower(trueSentence))
             {
@@ -1611,36 +1609,31 @@ void fill(User userData, int rows, int columns)
                 {
                     attp = attp + 1;
                 }
-
                 if (attp > 1)
                 {
-
                     moveCursorToPosition((columns - 35) / 2, rows + 2);
                     cout << "+--------------------------------+";
                     moveCursorToPosition((columns - 35) / 2, rows + 3);
                     cout << "|  attempts done!    " << "Attempts :" + to_string(attp) + "   |";
                     moveCursorToPosition((columns - 35) / 2, rows + 4);
                     cout << "+--------------------------------+";
-
                     _getch();
                     break;
                 }
                 else
                 {
-
-                    moveCursorToPosition((columns - 35) / 2, rows + 2);
-                    cout << "+--------------------------------+";
-                    moveCursorToPosition((columns - 35) / 2, rows + 3);
-                    cout << "|  Wrong Sentence! Try Again!     " << "Attempts :" + to_string(attp) + "   |";
-                    moveCursorToPosition((columns - 35) / 2, rows + 4);
-                    cout << "+--------------------------------+";
+                    moveCursorToPosition((columns - 50) / 2, rows + 2);
+                    cout << Color_Red << "+------------------------------------------------+";
+                    moveCursorToPosition((columns - 50) / 2, rows + 3);
+                    cout << "|  Wrong Sentence! Try Again!     " << Color_Bright_Cyan << "Attempts : " << to_string(attp) << Color_Red << "   |";
+                    moveCursorToPosition((columns - 50) / 2, rows + 4);
+                    cout << "+------------------------------------------------+" << Color_Reset;
                     sele = hintButtonsforfil(rows + 6);
 
                     if (sele == 0)
                     {
-                        goto quetionis;
+                        continue;
                     }
-
                     else if (sele == 1)
                     {
                         system("cls");
