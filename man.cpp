@@ -107,8 +107,8 @@ int verifyPassword(int rows, int columns, User &userData) {
     ThemeFormate(rows, columns);
     moveCursorToPosition((columns - 20) / 2, rows / 2);
     cout << "Enter Your Password: ";
-     
-    getline(cin, password);
+    cin >> password;
+    
 
     if (password != userData.password) {
         moveCursorToPosition((columns - 20) / 2, rows / 2 + 2);
@@ -129,7 +129,7 @@ void UpdateUsernameMenu(int rows, int columns, User &userData) {
             cout << "Enter New Username: ";
             string newUsername;
            moveCursorToPosition(((columns -20 ) / 2) + 20, rows / 2);
-            getline(cin, newUsername);  
+            cin >> newUsername;  
             User existingUser = searchUser(newUsername);
             if (existingUser.id != -1) {
                 AlertMessage(rows + 2, columns / 2, "Error", "Username Already Taken");
@@ -165,7 +165,8 @@ void ChangePasswordMenu(int rows, int columns, User &userData) {
     
    
     moveCursorToPosition(((columns -20 ) / 2) + 20, rows / 2);
-    getline(cin, newPassword);
+    cin >> newPassword;
+    // getline(cin, newPassword);
     if (newPassword.length() <= 6) {
         AlertMessage((rows / 2) + 3, columns / 2, "Error", "Password Too Short");
     } else {
