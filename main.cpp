@@ -1618,7 +1618,7 @@ void fill(User userData, int rows, int columns)
                     moveCursorToPosition((columns - 35) / 2, rows + 2);
                     cout << "+--------------------------------+";
                     moveCursorToPosition((columns - 35) / 2, rows + 3);
-                    cout << "|  attempts done!     " << "Attempts :" + to_string(attp) + "   |";
+                    cout << "|  attempts done!    " << "Attempts :" + to_string(attp) + "   |";
                     moveCursorToPosition((columns - 35) / 2, rows + 4);
                     cout << "+--------------------------------+";
 
