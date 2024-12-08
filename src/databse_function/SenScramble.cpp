@@ -8,10 +8,11 @@
 
 using namespace std;
 
-#define Sen getCurrentDirectory() + "/database/sentenceUser.txt"
+#define Sen getCurrentDirectory() + "/database/CrossWords_User.txt"
 // #define Sen "D:/cpp project/languageActivity/database/Sen.txt"
 
-struct SenData {
+struct SenData
+{
     int UserId;
     string Timestamp;
     string modifyingTimestamp;
@@ -21,7 +22,7 @@ struct SenData {
     int coin;
 };
 
-// Add Data 
+// Add Data
 void addSenData(int userId, const string name, int level, int score, int coin)
 {
     ofstream file;
@@ -124,7 +125,7 @@ vector<SenData> getSenData()
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
-        return dataEntries; 
+        return dataEntries;
     }
 
     string line;
@@ -151,7 +152,7 @@ vector<SenData> getSenData()
     }
 
     inFile.close();
-    return dataEntries; 
+    return dataEntries;
 }
 
 // Display Data In Table
@@ -199,7 +200,8 @@ void deleteSenData(int userId, const string &name)
     bool userFound = false;
 
     auto it = remove_if(dataEntries.begin(), dataEntries.end(),
-                        [&](const SenData &entry) {
+                        [&](const SenData &entry)
+                        {
                             return entry.UserId == userId && entry.name == name;
                         });
 
@@ -245,11 +247,11 @@ SenData getSingleUserSenData(int userId, const string &name)
     {
         if (entry.UserId == userId && entry.name == name)
         {
-            return entry; 
+            return entry;
         }
     }
     cout << "User not found in the database." << endl;
-    return SenData{-1, "", "", "", 0, 0, 0}; 
+    return SenData{-1, "", "", "", 0, 0, 0};
 }
 
 // fefkewfnjanajkfwnfjnfijnfnibifnew WordScumble Database  jefjkwebfiwebfdasjkdfevasasfeqj

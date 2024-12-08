@@ -17,6 +17,7 @@ struct User
     string name;
     string password;
 };
+
 struct Status
 {
     int id;
