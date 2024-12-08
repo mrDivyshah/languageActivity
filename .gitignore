@@ -3,4 +3,5 @@ main.c
 main.exe
 debug/
 .vscode/
-user.txt
+!database
+database/*.txt

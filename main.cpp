@@ -1321,8 +1321,9 @@ void sen(User userData, int rows, int columns)
         int sele = -1;
         system("cls");
         ThemeFormate(rows, columns);
-        WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
-        int level = levelSelection(rows, columns, 5, WordScrambleUserData.level);
+
+        SenData SenUserData = getSingleUserSenData(userData.id, userData.name);
+        int level = levelSelection(rows, columns, 5, SenUserData.level);
         system("cls");
         ThemeFormate(rows, columns);
         auto entry = sentences[level];
@@ -1335,14 +1336,16 @@ void sen(User userData, int rows, int columns)
 
         while (sele <= 3)
         {
+
             for (const auto &entry : sentences[level])
             {
 
-                const int MAX_SENTENCES = 10; // Maximum capacity for the array
-                int in[MAX_SENTENCES];        // Array to store used random indices
-                int inSize = 0;               // Current size of the in array
                 if (iteration == randomIndex)
                 {
+                    const int MAX_SENTENCES = 10; // Maximum capacity for the array
+                    int in[MAX_SENTENCES];        // Array to store used random indices
+                    int inSize = 0;
+
                     while (1)
                     {
 
@@ -1384,9 +1387,12 @@ void sen(User userData, int rows, int columns)
                                 abc = false;
                             }
                         }
-                        WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
+                        SenData SenUserData = getSingleUserSenData(userData.id, userData.name);
                         clearLines(rows - 10, rows + 11);
-                        UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
+                        UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(SenUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(SenUserData.coin));
+                        // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length()) / 2, rows - 4);
+                        // moveCursorToPosition((columns - (jumbledSentence.length() * 2) - jumbledSentence.length())/1.7, rows - 2);
+                        // center_Text(jumbledSentence, rows);
                         int charCount = jumbledSentence.length();
                         moveCursorToPosition((columns - charCount) / 2, rows - 4);
 
@@ -1395,7 +1401,7 @@ void sen(User userData, int rows, int columns)
                         string userSentence;
                         if (sele == 0)
                         {
-                            updateWordScrambleData(userData.id, userData.name, WordScrambleUserData.level, WordScrambleUserData.score, WordScrambleUserData.coin - 1);
+                            updateSenData(userData.id, userData.name, SenUserData.level, SenUserData.score, SenUserData.coin - 1);
                             string hint = entry.second[hintCount++ % entry.second.size()];
                             moveCursorToPosition((columns - hint.length() - 10) / 2, rows - 2);
                             cout << Color_Yellow << "Hint : " << Color_Blue << "'" << hint << "'" << Color_Reset;
@@ -1450,15 +1456,15 @@ void sen(User userData, int rows, int columns)
 
             if (stg >= 3)
             {
-                UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(WordScrambleUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(WordScrambleUserData.coin));
+                UserHeader("Level: " + to_string(level) + Color_Bright_Red + "   :::  Sentence Jumble :::  " + Color_Yellow + " Score : [" + to_string(SenUserData.score) + "] ", columns, Color_Bright_Red.length() + Color_Yellow.length(), true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(SenUserData.coin));
                 char gameName[50] = "Sentence Jumble";
                 int currentPlayScore = 0;
                 for (int i = 0; i < 3; ++i)
                 {
                     currentPlayScore += stage[i];
                 }
-                updateWordScrambleData(userData.id, userData.name, (level == WordScrambleUserData.level) ? WordScrambleUserData.level + 1 : WordScrambleUserData.level, WordScrambleUserData.score + currentPlayScore, (currentPlayScore == 30) ? WordScrambleUserData.coin + 1 : WordScrambleUserData.coin);
-                ScoreBoard(gameName, level, WordScrambleUserData.score, currentPlayScore, columns, rows);
+                updateSenData(userData.id, userData.name, (level == SenUserData.level) ? SenUserData.level + 1 : SenUserData.level, SenUserData.score + currentPlayScore, (currentPlayScore == 30) ? SenUserData.coin + 1 : SenUserData.coin);
+                ScoreBoard(gameName, level, SenUserData.score, currentPlayScore, columns, rows);
                 level++;
                 _getch();
                 break;
@@ -1474,9 +1480,7 @@ void sen(User userData, int rows, int columns)
     }
 }
 
-
 // Shuffle Words Code started -----------+++++++++++++---------
-
 
 map<int, vector<pair<string, vector<string>>>> loadfillintheblanks(const string &filename)
 {
@@ -1692,12 +1696,14 @@ string buttons(int row, int columns, const vector<string> &buttonLabels)
     }
 }
 
-void fill(User userData, int rows, int columns) {
+void fill(User userData, int rows, int columns)
+{
     map<int, vector<pair<string, vector<string>>>> sentences = loadfillintheblanks("./src/game/gra.txt");
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
 
-    while (true) {
+    while (true)
+    {
         rows = mrows;
         int stage[3] = {-1, -1, -1};
         int sele = -1;
@@ -1711,14 +1717,16 @@ void fill(User userData, int rows, int columns) {
         auto entry = sentences[level];
         int totalSentences = sentences[level].size();
         unordered_set<int> usedIndices;
-     
+
         int stg = 0;
         rows = rows / 2;
 
-        while (stg < 3) {
+        while (stg < 3)
+        {
             attp = 0;
             int randomIndex;
-            do {
+            do
+            {
                 randomIndex = rand() % totalSentences;
             } while (usedIndices.count(randomIndex));
             usedIndices.insert(randomIndex);
@@ -1727,91 +1735,94 @@ void fill(User userData, int rows, int columns) {
             string jumbledSentence = entry.first;
             string trueSentence = entry.second[0];
             vector<string> options = {entry.second[1], entry.second[2], entry.second[3], entry.second[4]};
-           
-            quetionis:
-                clearLines(rows - 10, rows + 11);
-                UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
 
-                int charCount = jumbledSentence.length();
-                moveCursorToPosition((columns - charCount) / 2, rows - 4);
-                cout << jumbledSentence;
+        quetionis:
+            clearLines(rows - 10, rows + 11);
+            UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
 
-                string userSentence = buttons(rows, columns, options);
+            int charCount = jumbledSentence.length();
+            moveCursorToPosition((columns - charCount) / 2, rows - 4);
+            cout << jumbledSentence;
 
-                if (toLower(userSentence) == toLower(trueSentence)) {
-                    moveCursorToPosition((columns - 22) / 2, rows + 2);
-                    cout << "+---------------------+";
-                    moveCursorToPosition((columns - 22) / 2, rows + 3);
-                    cout << "|  Great! You Win!   |";
-                    moveCursorToPosition((columns - 22) / 2, rows + 4);
-                    cout << "+---------------------+";
-                    stage[stg++] = 10;
-                    
-                } else {
-                    if (attp<3){
-                        attp = attp + 1;
+            string userSentence = buttons(rows, columns, options);
+
+            if (toLower(userSentence) == toLower(trueSentence))
+            {
+                moveCursorToPosition((columns - 22) / 2, rows + 2);
+                cout << "+---------------------+";
+                moveCursorToPosition((columns - 22) / 2, rows + 3);
+                cout << "|  Great! You Win!   |";
+                moveCursorToPosition((columns - 22) / 2, rows + 4);
+                cout << "+---------------------+";
+                stage[stg++] = 10;
+            }
+            else
+            {
+                if (attp < 3)
+                {
+                    attp = attp + 1;
+                }
+
+                if (attp > 1)
+                {
+
+                    moveCursorToPosition((columns - 35) / 2, rows + 2);
+                    cout << "+--------------------------------+";
+                    moveCursorToPosition((columns - 35) / 2, rows + 3);
+                    cout << "|  attempts done!     " << "Attempts :" + to_string(attp) + "   |";
+                    moveCursorToPosition((columns - 35) / 2, rows + 4);
+                    cout << "+--------------------------------+";
+
+                    _getch();
+                    break;
+                }
+                else
+                {
+
+                    moveCursorToPosition((columns - 35) / 2, rows + 2);
+                    cout << "+--------------------------------+";
+                    moveCursorToPosition((columns - 35) / 2, rows + 3);
+                    cout << "|  Wrong Sentence! Try Again!     " << "Attempts :" + to_string(attp) + "   |";
+                    moveCursorToPosition((columns - 35) / 2, rows + 4);
+                    cout << "+--------------------------------+";
+                    sele = hintButtonsforfil(rows + 6);
+
+                    if (sele == 0)
+                    {
+                        goto quetionis;
                     }
-                    
-                 
-                    if (attp > 1) {
-                        
-                        moveCursorToPosition((columns - 35) / 2, rows + 2);
-                        cout << "+--------------------------------+";
-                        moveCursorToPosition((columns - 35) / 2, rows + 3);
-                        cout << "|  attempts done!     " << "Attempts :" + to_string(attp) + "   |";
-                        moveCursorToPosition((columns - 35) / 2, rows + 4);
-                        cout << "+--------------------------------+";
-                         
 
-                        _getch();
+                    else if (sele == 1)
+                    {
+                        system("cls");
+                        return;
+                    }
+                    else if (sele == 2)
                         break;
-                            
-                    } else {
-                       
-                       
-                        moveCursorToPosition((columns - 35) / 2, rows + 2);
-                        cout << "+--------------------------------+";
-                        moveCursorToPosition((columns - 35) / 2, rows + 3);
-                        cout << "|  Wrong Sentence! Try Again!     " << "Attempts :" + to_string(attp) + "   |";
-                        moveCursorToPosition((columns - 35) / 2, rows + 4);
-                        cout << "+--------------------------------+";
-                        sele = hintButtonsforfil(rows + 6);
-
-                        if (sele == 0){
-                            goto quetionis;
-                        }
-                            
-                        else if (sele == 1) {
-                            system("cls");
-                            return;
-                        } else if (sele == 2)
-                            break;
-                    }
-                 
+                }
             }
 
             if (sele == 3)
                 break;
 
-            if (stg >= 3) {
-            UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
-            char gameName[50] = "Fill In the Blanks";
-            int currentPlayScore = 0;
-            for (int i = 0; i < 3; ++i)
-                currentPlayScore += stage[i];
-            updateFillintheData(userData.id, userData.name, (level == FillintheUserData.level) ? FillintheUserData.level + 1 : FillintheUserData.level, FillintheUserData.score + currentPlayScore, (currentPlayScore == 30) ? FillintheUserData.coin + 1 : FillintheUserData.coin);
-            ScoreBoard(gameName, level, FillintheUserData.score, currentPlayScore, columns, rows);
-            level++;
-           _getch();
-            break;
-          
-        } else {
-            if (sele == 3)
+            if (stg >= 3)
+            {
+                UserHeader("Level: " + to_string(level) + " ::: Fill In the Blanks ::: Score : [" + to_string(FillintheUserData.score) + "] ", columns, 0, true, "Stage : " + stageArrayToString(stage), "Coin : " + to_string(FillintheUserData.coin));
+                char gameName[50] = "Fill In the Blanks";
+                int currentPlayScore = 0;
+                for (int i = 0; i < 3; ++i)
+                    currentPlayScore += stage[i];
+                updateFillintheData(userData.id, userData.name, (level == FillintheUserData.level) ? FillintheUserData.level + 1 : FillintheUserData.level, FillintheUserData.score + currentPlayScore, (currentPlayScore == 30) ? FillintheUserData.coin + 1 : FillintheUserData.coin);
+                ScoreBoard(gameName, level, FillintheUserData.score, currentPlayScore, columns, rows);
+                level++;
+                _getch();
                 break;
+            }
+            else
+            {
+                if (sele == 3)
+                    break;
+            }
         }
-        }
-
-        
     }
 }
-
