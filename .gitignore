@@ -3,5 +3,3 @@ main.c
 main.exe
 debug/
 .vscode/
-!database
-database/*.txt
