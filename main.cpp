@@ -3,12 +3,14 @@
 // ##  1.  How To Run This Game ?                        ##
 // ##  Ans: g++ main.cpp -o main -std=c++11 && main      ##
 // ##                                                    ##
+
 #include <stdlib.h>
 #include <windows.h>
 #include <string>
 #include <conio.h>
 #include <random>
 #include <unordered_set>
+#include "src/gameList.cpp"
 #include "src/headding.cpp" // nameSpace, windows.h, iostream, system.cpp
 #include "src/databse_function/connection.cpp"
 #include "src/databse_function/WordScrambleDatabase.cpp"
@@ -19,13 +21,8 @@
 #include "src/game/fillingTheBlanks.cpp"
 #include "src/Admin/main.cpp"
 #include "src/themeFormat.cpp"
-
-struct Games
-{
-    int index;
-    string name;
-    string functionName;
-};
+#include "src/AlertMessage.cpp" 
+#include "src/Manager.cpp"     
 
 struct SelectionValue
 {
@@ -33,18 +30,10 @@ struct SelectionValue
     bool enterPressed;
 };
 
-vector<Games> gameList = {
-    {1, "Cross Words", "Hangman"},
-    // {2, "Puzal Alfa", "Puzal"},
-    {2, "Word Scramble", "wordScramble"},
-    {3, "Fill in the blanks", "Blanks"}};
-
 int G_columns, G_rows;
 User LoginUser(int columns, int rows);
 void printMenu(int selected, int rows, int columns);
 int menuSelectionPrint(int rows, int columns);
-void clearLines(int startRow, int endRow);
-void AlertMessage(int rows, int coumns, string type, string msg);
 SelectionValue Selection(int selected, int total);
 void Home(int rows, int columns, User userData);
 void wordScramble(User userData, int rows, int columns);
@@ -337,43 +326,6 @@ int menuSelectionPrint(int rows, int columns)
     return selected;
 }
 
-void clearLines(int startRow, int endRow)
-{
-    for (int i = startRow; i <= endRow; ++i)
-    {
-        cout << "\033[" << i << ";" << 1 << "H";
-        cout << "\033[K";
-    }
-}
-
-void AlertMessage(int rows, int columns, string type, string msg)
-{
-    int boxWidth = msg.length() + 8; // Adding padding to message box
-    int boxHeight = 3, key;          // Top border, message row, bottom border
-    cout << Color_Red;
-    // Draw the top border
-    moveCursorToPosition(columns - (boxWidth / 2), rows);
-    cout << "* " << string(boxWidth - 4, '-') << " *";
-
-    // Draw the message line with side borders
-    moveCursorToPosition(columns - (boxWidth / 2), rows + 1);
-    cout << "|   " << msg << "   |";
-
-    // Draw the bottom border
-    moveCursorToPosition(columns - (boxWidth / 2), rows + 2);
-    cout << "* " << string(boxWidth - 4, '-') << " *";
-    cout << Color_Reset;
-    while (true)
-    {
-        key = _getch();
-        if (key == 13)
-        {
-            clearLines(rows, rows + 3);
-            break;
-        }
-    }
-}
-
 void UserHeader(string content, int column, int minusLength, bool isFooterAvail, string leftContent, string rightContent)
 {
     int contentLength = content.length() - minusLength;
@@ -604,7 +556,7 @@ void Home(int rows, int columns, User userData)
         {
             if (option.selected == gameListSize)
             {
-                cout << "Selected Menu";
+                ManageUserDataMenu(rows, columns, userData);
             }
             else if (option.selected == gameListSize + 1)
             {
@@ -1139,8 +1091,7 @@ void CrossWords(User userData, int rows, int columns)
 {
     map<int, vector<pair<string, vector<string>>>> sentences = loadVocabulary();
     srand(static_cast<unsigned int>(time(0)));
-    cout << "I am Hear";
-    _getch();
+
     int mrows = rows;
     int sele = -1;
 
