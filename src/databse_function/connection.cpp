@@ -137,50 +137,43 @@ bool userExists(const string &name)
     return false; // User not found
 }
 
-// Function to update by name
-void updateUser(const string &searchName)
-{
+bool updateUser(int searchId, const User &updatedUser) {
     ifstream file(USER_DATABASE);
-    vector<User> users; // Store all users temporarily
-    int id;
-    string joiningDate, name;
+    vector<User> users;
     bool found = false;
 
-    if (file.is_open())
-    {
-        // Read all users from the file
-        while (file >> id >> joiningDate >> name)
-        {
-            if (name == searchName)
-            {
-                found = true;
-            }
-            users.push_back({id, joiningDate, name}); // Store the user
-        }
-        file.close();
+    if (!file.is_open()) {
+        cout << "Unable to open file.\n";
+        return false;
+    }
 
-        if (found)
-        {
-            // Write updated data back to the file
-            ofstream outFile(USER_DATABASE, ios::trunc);
-            for (const auto &user : users)
-            {
-                outFile << user.id << " " << user.joiningDate << " " << user.name << endl;
-            }
-            outFile.close();
-            cout << "User updated successfully.\n";
-        }
-        else
-        {
-            cout << "User not found.\n";
+    // Read users from the file
+    int id;
+    string joiningDate, username, password;
+    while (file >> id >> joiningDate >> username >> password) {
+        if (id == searchId) {
+            found = true;
+            users.push_back(updatedUser);  // Replace with updated user
+        } else {
+            users.push_back({id, joiningDate, username, password});
         }
     }
-    else
-    {
-        cout << "Unable to open file.\n";
+    file.close();
+
+    if (found) {
+        // Write updated users back to the file
+        ofstream outFile(USER_DATABASE, ios::trunc);
+        for (const auto &user : users) {
+            outFile << user.id << " " << user.joiningDate << " " << user.name << " " << user.password << endl;
+        }
+        outFile.close();
+        cout << "User updated successfully.\n";
+        return true;
+    } else {
+        cout << "User not found.\n";
+        return false;
     }
 }
-
 // Function to add a new user
 User addUser(string name, const string password)
 {

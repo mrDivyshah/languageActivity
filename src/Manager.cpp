@@ -154,7 +154,8 @@ void UpdateUsernameMenu(int rows, int columns, User &userData)
             word_username_changes(userData.id, newUsername);
             sentence_username_changes(userData.id, newUsername);
             fill_username_changes(userData.id, newUsername);
-            updateUsername(userData.id, newUsername);
+            userData.name = newUsername;
+            updateUser(userData.id, userData);
             userData.name = newUsername;
 
             Message((rows / 2) + 3, columns / 2, "Success", "Username Updated Successfully");
