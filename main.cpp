@@ -799,10 +799,6 @@ string stageArrayToString(int stage[])
 void wordScramble(User userData, int rows, int columns)
 {
     map<int, vector<pair<string, vector<string>>>> words = parseFiles();
-     for (const auto &entry : words[1])
-            { cout << entry.first;
-            }
-    _getch();
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
     WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
