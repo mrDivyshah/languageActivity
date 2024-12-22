@@ -5,15 +5,14 @@
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
-#include "../time.cpp"
-#include "../colors.cpp"
 
 using namespace std;
 
-#define SenScramble "../../database/sentenceUser.txt"
-// #define SenScramble "D:/cpp project/languageActivity/database/WordScramble.txt"
+#define Sen getCurrentDirectory() + "/database/CrossWords_User.txt"
+// #define Sen "D:/cpp project/languageActivity/database/Sen.txt"
 
-struct SenScrambleData {
+struct SenData
+{
     int UserId;
     string Timestamp;
     string modifyingTimestamp;
@@ -23,11 +22,11 @@ struct SenScrambleData {
     int coin;
 };
 
-// Add Data 
-void addSenScrambleData(int userId, const string name, int level, int score, int coin)
+// Add Data
+void addSenData(int userId, const string name, int level, int score, int coin)
 {
     ofstream file;
-    SenScrambleData data;
+    SenData data;
     data.UserId = userId;
     data.Timestamp = getTime();
     data.modifyingTimestamp = data.Timestamp;
@@ -35,7 +34,7 @@ void addSenScrambleData(int userId, const string name, int level, int score, int
     data.level = level;
     data.score = score;
     data.coin = coin;
-    file.open(SenScramble, ios::app);
+    file.open(Sen, ios::app);
     if (!file.is_open())
     {
         cerr << "Failed to open the file." << endl;
@@ -54,22 +53,22 @@ void addSenScrambleData(int userId, const string name, int level, int score, int
 }
 
 // Update Data
-void updateSenScrambleData(int userId, const string name, int newLevel, int newScore, int newCoin)
+void updateSenData(int userId, const string name, int newLevel, int newScore, int newCoin)
 {
-    ifstream inFile(SenScramble);
+    ifstream inFile(Sen);
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
         return;
     }
 
-    vector<SenScrambleData> dataEntries;
+    vector<SenData> dataEntries;
     string line;
 
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        SenScrambleData data;
+        SenData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -97,7 +96,69 @@ void updateSenScrambleData(int userId, const string name, int newLevel, int newS
     }
     inFile.close();
 
-    ofstream outFile(SenScramble);
+    ofstream outFile(Sen);
+    if (!outFile.is_open())
+    {
+        cerr << "Failed to open the file for writing." << endl;
+        return;
+    }
+
+    for (const auto &entry : dataEntries)
+    {
+        outFile << entry.UserId << ","
+                << entry.Timestamp << ","
+                << entry.modifyingTimestamp << ","
+                << entry.name << ","
+                << entry.level << ","
+                << entry.score << ","
+                << entry.coin << endl;
+    }
+    outFile.close();
+}
+
+// Update Data Using User Id
+void updateSenDataByUserId(int userId, const string newName)
+{
+    ifstream inFile(Sen);
+    if (!inFile.is_open())
+    {
+        cerr << "Failed to open the file for reading." << endl;
+        return;
+    }
+
+    vector<SenData> dataEntries;
+    string line;
+
+    while (getline(inFile, line))
+    {
+        stringstream ss(line);
+        SenData data;
+        string userIdStr, levelStr, scoreStr, coinStr;
+
+        getline(ss, userIdStr, ',');
+        getline(ss, data.Timestamp, ',');
+        getline(ss, data.modifyingTimestamp, ',');
+        getline(ss, data.name, ',');
+        getline(ss, levelStr, ',');
+        getline(ss, scoreStr, ',');
+        getline(ss, coinStr, ',');
+
+        data.UserId = stoi(userIdStr);
+        data.level = stoi(levelStr);
+        data.score = stoi(scoreStr);
+        data.coin = stoi(coinStr);
+
+        if (data.UserId == userId)
+        {
+            data.name = newName;
+            data.modifyingTimestamp = getTime();
+        }
+
+        dataEntries.push_back(data);
+    }
+    inFile.close();
+
+    ofstream outFile(Sen);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -118,22 +179,22 @@ void updateSenScrambleData(int userId, const string name, int newLevel, int newS
 }
 
 // Get Data
-vector<SenScrambleData> getSenScrambleData()
+vector<SenData> getSenData()
 {
-    vector<SenScrambleData> dataEntries;
-    ifstream inFile(SenScramble);
+    vector<SenData> dataEntries;
+    ifstream inFile(Sen);
 
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
-        return dataEntries; 
+        return dataEntries;
     }
 
     string line;
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        SenScrambleData data;
+        SenData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -153,11 +214,11 @@ vector<SenScrambleData> getSenScrambleData()
     }
 
     inFile.close();
-    return dataEntries; 
+    return dataEntries;
 }
 
 // Display Data In Table
-void displayDataAsTable(const vector<SenScrambleData> &dataEntries)
+void displayDataAsTable(const vector<SenData> &dataEntries)
 {
     const int widthId = 8;
     const int widthTimestamp = 25;
@@ -195,13 +256,14 @@ void displayDataAsTable(const vector<SenScrambleData> &dataEntries)
 }
 
 // Delete Data
-void deleteSenScrambleData(int userId, const string &name)
+void deleteSenData(int userId, const string &name)
 {
-    vector<SenScrambleData> dataEntries = getSenScrambleData();
+    vector<SenData> dataEntries = getSenData();
     bool userFound = false;
 
     auto it = remove_if(dataEntries.begin(), dataEntries.end(),
-                        [&](const SenScrambleData &entry) {
+                        [&](const SenData &entry)
+                        {
                             return entry.UserId == userId && entry.name == name;
                         });
 
@@ -217,7 +279,7 @@ void deleteSenScrambleData(int userId, const string &name)
         return;
     }
 
-    ofstream outFile(SenScramble);
+    ofstream outFile(Sen);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -240,18 +302,18 @@ void deleteSenScrambleData(int userId, const string &name)
 }
 
 // find single user data
-SenScrambleData getSingleUserSenScrambleData(int userId, const string &name)
+SenData getSingleUserSenData(int userId, const string &name)
 {
-    vector<SenScrambleData> dataEntries = getSenScrambleData();
+    vector<SenData> dataEntries = getSenData();
     for (const auto &entry : dataEntries)
     {
         if (entry.UserId == userId && entry.name == name)
         {
-            return entry; 
+            return entry;
         }
     }
     cout << "User not found in the database." << endl;
-    return SenScrambleData{-1, "", "", "", 0, 0, 0}; 
+    return SenData{-1, "", "", "", 0, 0, 0};
 }
 
 // fefkewfnjanajkfwnfjnfijnfnibifnew WordScumble Database  jefjkwebfiwebfdasjkdfevasasfeqj

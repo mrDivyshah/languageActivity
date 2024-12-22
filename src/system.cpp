@@ -24,3 +24,12 @@ void moveCursorToPosition(int x, int y)
     // Move the cursor to the specified position
     SetConsoleCursorPosition(hConsole, pos);
 }
+
+void clearLines(int startRow, int endRow)
+{
+    for (int i = startRow; i <= endRow; ++i)
+    {
+        cout << "\033[" << i << ";" << 1 << "H";
+        cout << "\033[K";
+    }
+}

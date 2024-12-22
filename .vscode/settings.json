@@ -9,6 +9,9 @@
     "ostream": "cpp",
     "vector": "cpp",
     "format": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "utility": "cpp",
+    "xtree": "cpp",
+    "*.tcc": "cpp"
   }
 }

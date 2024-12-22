@@ -5,15 +5,14 @@
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
-#include "../time.cpp"
-#include "../colors.cpp"
 
 using namespace std;
 
-#define WordScramble getCurrentDirectory() + "/database/WordScramble.txt"
-// #define WordScramble "D:/cpp project/languageActivity/database/WordScramble.txt"
+#define Fillinthe getCurrentDirectory() + "/database/fillinUser.txt"
+// #define Fillinthe "D:/cpp project/languageActivity/database/Fillinthe.txt"
 
-struct WordScrambleData {
+struct FillintheData
+{
     int UserId;
     string Timestamp;
     string modifyingTimestamp;
@@ -23,11 +22,11 @@ struct WordScrambleData {
     int coin;
 };
 
-// Add Data 
-void addWordScrambleData(int userId, const string name, int level, int score, int coin)
+// Add Data
+void addFillintheData(int userId, const string name, int level, int score, int coin)
 {
     ofstream file;
-    WordScrambleData data;
+    FillintheData data;
     data.UserId = userId;
     data.Timestamp = getTime();
     data.modifyingTimestamp = data.Timestamp;
@@ -35,7 +34,7 @@ void addWordScrambleData(int userId, const string name, int level, int score, in
     data.level = level;
     data.score = score;
     data.coin = coin;
-    file.open(WordScramble, ios::app);
+    file.open(Fillinthe, ios::app);
     if (!file.is_open())
     {
         cerr << "Failed to open the file." << endl;
@@ -54,22 +53,22 @@ void addWordScrambleData(int userId, const string name, int level, int score, in
 }
 
 // Update Data
-void updateWordScrambleData(int userId, const string name, int newLevel, int newScore, int newCoin)
+void updateFillintheData(int userId, const string name, int newLevel, int newScore, int newCoin)
 {
-    ifstream inFile(WordScramble);
+    ifstream inFile(Fillinthe);
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
         return;
     }
 
-    vector<WordScrambleData> dataEntries;
+    vector<FillintheData> dataEntries;
     string line;
 
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        WordScrambleData data;
+        FillintheData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -97,7 +96,7 @@ void updateWordScrambleData(int userId, const string name, int newLevel, int new
     }
     inFile.close();
 
-    ofstream outFile(WordScramble);
+    ofstream outFile(Fillinthe);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -117,23 +116,23 @@ void updateWordScrambleData(int userId, const string name, int newLevel, int new
     outFile.close();
 }
 
-// Update Data Using UserId
-void updateWordScrambleDataByUserId(int userId, string newName)
+// Update Data using UserId
+void updateFillintheDataByUserId(int userId, const string newName)
 {
-    ifstream inFile(WordScramble);
+    ifstream inFile(Fillinthe);
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
         return;
     }
 
-    vector<WordScrambleData> dataEntries;
+    vector<FillintheData> dataEntries;
     string line;
 
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        WordScrambleData data;
+        FillintheData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -149,7 +148,7 @@ void updateWordScrambleDataByUserId(int userId, string newName)
         data.score = stoi(scoreStr);
         data.coin = stoi(coinStr);
 
-        if (data.UserId == userId)
+        if (data.UserId == userId )
         {
             data.name = newName;
             data.modifyingTimestamp = getTime();
@@ -159,7 +158,7 @@ void updateWordScrambleDataByUserId(int userId, string newName)
     }
     inFile.close();
 
-    ofstream outFile(WordScramble);
+    ofstream outFile(Fillinthe);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -180,22 +179,22 @@ void updateWordScrambleDataByUserId(int userId, string newName)
 }
 
 // Get Data
-vector<WordScrambleData> getWordScrambleData()
+vector<FillintheData> getFillintheData()
 {
-    vector<WordScrambleData> dataEntries;
-    ifstream inFile(WordScramble);
+    vector<FillintheData> dataEntries;
+    ifstream inFile(Fillinthe);
 
     if (!inFile.is_open())
     {
         cerr << "Failed to open the file for reading." << endl;
-        return dataEntries; 
+        return dataEntries;
     }
 
     string line;
     while (getline(inFile, line))
     {
         stringstream ss(line);
-        WordScrambleData data;
+        FillintheData data;
         string userIdStr, levelStr, scoreStr, coinStr;
 
         getline(ss, userIdStr, ',');
@@ -215,11 +214,11 @@ vector<WordScrambleData> getWordScrambleData()
     }
 
     inFile.close();
-    return dataEntries; 
+    return dataEntries;
 }
 
 // Display Data In Table
-void displayDataAsTable(const vector<WordScrambleData> &dataEntries)
+void displayDataAsTable(const vector<FillintheData> &dataEntries)
 {
     const int widthId = 8;
     const int widthTimestamp = 25;
@@ -257,13 +256,14 @@ void displayDataAsTable(const vector<WordScrambleData> &dataEntries)
 }
 
 // Delete Data
-void deleteWordScrambleData(int userId, const string &name)
+void deleteFillintheData(int userId, const string &name)
 {
-    vector<WordScrambleData> dataEntries = getWordScrambleData();
+    vector<FillintheData> dataEntries = getFillintheData();
     bool userFound = false;
 
     auto it = remove_if(dataEntries.begin(), dataEntries.end(),
-                        [&](const WordScrambleData &entry) {
+                        [&](const FillintheData &entry)
+                        {
                             return entry.UserId == userId && entry.name == name;
                         });
 
@@ -279,7 +279,7 @@ void deleteWordScrambleData(int userId, const string &name)
         return;
     }
 
-    ofstream outFile(WordScramble);
+    ofstream outFile(Fillinthe);
     if (!outFile.is_open())
     {
         cerr << "Failed to open the file for writing." << endl;
@@ -302,18 +302,18 @@ void deleteWordScrambleData(int userId, const string &name)
 }
 
 // find single user data
-WordScrambleData getSingleUserWordScrambleData(int userId, const string &name)
+FillintheData getSingleUserFillintheData(int userId, const string &name)
 {
-    vector<WordScrambleData> dataEntries = getWordScrambleData();
+    vector<FillintheData> dataEntries = getFillintheData();
     for (const auto &entry : dataEntries)
     {
         if (entry.UserId == userId && entry.name == name)
         {
-            return entry; 
+            return entry;
         }
     }
     cout << "User not found in the database." << endl;
-    return WordScrambleData{-1, "", "", "", 0, 0, 0}; 
+    return FillintheData{-1, "", "", "", 0, 0, 0};
 }
 
 // fefkewfnjanajkfwnfjnfijnfnibifnew WordScumble Database  jefjkwebfiwebfdasjkdfevasasfeqj

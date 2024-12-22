@@ -1,0 +1,16 @@
+1,Apples are __.,green,yellow,red,blue,red
+1,Bananas are __.,yellow,green,red,orange,yellow,It's about bananas.,Think tropical.,Their ripe color.,Curved and easy to peel.,Eaten as snacks.,Rich in potassium.
+1,I am a __.,girl,boy,tree,fruit,boy,It's about self.,Think gender.,It's about identity.,Pronouns matter.,Opposite of girl.,One word.
+1,Milk is __.,red,blue,white,green,white,It's about dairy.,What color is milk?,Think natural.,What matches clouds?,It’s liquid.,Essential drink.
+1,Sky is __.,red,white,blue,green,blue,It's about nature.,Look up during the day.,Clear weather.,Often described as calming.,Associated with oceans.,Primary color.
+1,Water is __.,important,useless,fun,essential,essential,It's about life.,We cannot survive without it.,Used for drinking.,Supports ecosystems.,Covers 70% of Earth.,Tasteless but vital.
+1,Sun gives __.,darkness,light,heat,cold,light,It's about nature.,It shines.,Helps plants grow.,Needed for life.,Seen during the day.,Bright and warm.
+1,Earth is __.,flat,round,square,triangle,round,It's about the planet.,Its shape.,What astronauts see.,Spherical object.,Planet we live on.,Not flat.
+1,Books __ us.,entertain,teach,bore,scare,teach,It's about learning.,Think knowledge.,What they provide.,You read them.,Educational tool.,Builds vocabulary.
+1,Clouds bring __.,sun,light,rain,wind,rain,It's about weather.,Think storms.,What falls from clouds?,Needed for plants.,Liquid from sky.,Part of the water cycle.
+2,Fruits are very __.,tasty,unhealthy,healthy,rare,healthy,It's about nutrition.,Good for the body.,Eaten fresh.,Part of a balanced diet.,Full of vitamins.,Found in orchards.
+2,Exercise maintains physical __.,shape,health,form,strength,health,It's about fitness.,Think body.,Keeps you strong.,Prevent diseases.,Includes workouts.,Recommended daily.
+2,Reading books enhances __.,power,knowledge,fun,strength,knowledge,It's about learning.,Think education.,Books provide it.,Improves thinking.,Linked to study.,Makes you smarter.
+2,Kindness creates positive __.,effects,connections,feelings,results,connections,It's about emotions.,What it builds.,Helps relationships.,Needed for trust.,Involves empathy.,Strengthens bonds.
+2,Flowers bloom during __.,winter,spring,fall,summer,spring,It's about nature.,Think seasons.,When plants grow.,Comes after winter.,Filled with colors.,Associated with renewal.
+2,Friendship is based on __.,money,fear,trust,fame,trust,It's about relationships.,Needed for bonds.,Opposite of doubt.,Strengthens connections.,Found in strong friendships.,One word.
