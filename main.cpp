@@ -78,23 +78,13 @@ int main()
     cout << Color_Blue;
     cout << "Hello! Get ready to play and improve your language skills!";
     cout << Color_Reset;
-    system("cls");
     userData = LoginUser(((columns - 40) / 2), (columns > 125 && rows > 35) ? 18 : 8);
     if (userData.id == -2)
     {
         system("cls");
         return 0;
     }
-    // userData.id = 1;
-    // userData.joiningDate = "10/21/2022";
-    // userData.name = "divyshah";
-    // userData.password = "12131415";
     Home(rows, columns, userData);
-
-    // cout << "columns " << columns << "\t Rows " << rows;
-
-    // moveCursorToPosition(0, rows);
-
     _getch();
 }
 
