@@ -137,43 +137,62 @@ bool userExists(const string &name)
     return false; // User not found
 }
 
-bool updateUser(int searchId, const User &updatedUser) {
+bool updateUser(int searchId, const User &updatedUser)
+{
     ifstream file(USER_DATABASE);
     vector<User> users;
     bool found = false;
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         cout << "Unable to open file.\n";
         return false;
     }
 
-    // Read users from the file
-    int id;
-    string joiningDate, username, password;
-    while (file >> id >> joiningDate >> username >> password) {
-        if (id == searchId) {
+    string line;
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string idStr, joiningDate, name, password;
+
+        // Read comma-separated values
+        getline(ss, idStr, ',');
+        getline(ss, joiningDate, ',');
+        getline(ss, name, ',');
+        getline(ss, password, ',');
+
+        int id = stoi(idStr);
+
+        if (id == searchId)
+        {
             found = true;
-            users.push_back(updatedUser);  // Replace with updated user
-        } else {
-            users.push_back({id, joiningDate, username, password});
+            users.push_back(updatedUser); // Replace with updated user
+        }
+        else
+        {
+            users.push_back({id, joiningDate, name, password});
         }
     }
     file.close();
 
-    if (found) {
+    if (found)
+    {
         // Write updated users back to the file
         ofstream outFile(USER_DATABASE, ios::trunc);
-        for (const auto &user : users) {
-            outFile << user.id << " " << user.joiningDate << " " << user.name << " " << user.password << endl;
+        for (const auto &user : users)
+        {
+            outFile << user.id << "," << user.joiningDate << "," << user.name << "," << user.password << endl;
         }
         outFile.close();
-        cout << "User updated successfully.\n";
         return true;
-    } else {
+    }
+    else
+    {
         cout << "User not found.\n";
         return false;
     }
 }
+
 // Function to add a new user
 User addUser(string name, const string password)
 {
@@ -205,16 +224,16 @@ User addUser(string name, const string password)
 
         return userData;
     }
-    catch (const exception &e) // Catch any exceptions derived from std::exception
+    catch (const exception &e) 
     {
         cout << "An error occurred: " << e.what() << endl;
     }
-    catch (...) // Catch any other unexpected exceptions
+    catch (...) 
     {
         cout << "An unknown error occurred." << endl;
     }
 
-    return userData; // Return the default userData in case of an error
+    return userData; 
 }
 
 vector<string> AllAvailableUsers()

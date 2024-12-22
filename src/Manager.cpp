@@ -151,13 +151,11 @@ void UpdateUsernameMenu(int rows, int columns, User &userData)
         }
         else
         {
-            word_username_changes(userData.id, newUsername);
-            sentence_username_changes(userData.id, newUsername);
-            fill_username_changes(userData.id, newUsername);
+            updateWordScrambleDataByUserId(userData.id, newUsername);
+            updateSenDataByUserId(userData.id, newUsername);
+            updateFillintheDataByUserId(userData.id, newUsername);
             userData.name = newUsername;
             updateUser(userData.id, userData);
-            userData.name = newUsername;
-
             Message((rows / 2) + 3, columns / 2, "Success", "Username Updated Successfully");
         }
     }
@@ -195,9 +193,8 @@ void ChangePasswordMenu(int rows, int columns, User &userData)
             xaa = printCenteredConfirmation(rows, columns, "Are you sure you want to change your password? (y/n): ");
             if (xaa)
             {
-                updatePassword(userData.id, newPassword);
                 userData.password = newPassword;
-
+                updateUser(userData.id, userData);
                 Message((rows / 2) + 3, columns / 2, "Success", "Password Updated Successfully");
                 return;
             }

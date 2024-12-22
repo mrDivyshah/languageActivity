@@ -117,6 +117,68 @@ void updateWordScrambleData(int userId, const string name, int newLevel, int new
     outFile.close();
 }
 
+// Update Data Using UserId
+void updateWordScrambleDataByUserId(int userId, string newName)
+{
+    ifstream inFile(WordScramble);
+    if (!inFile.is_open())
+    {
+        cerr << "Failed to open the file for reading." << endl;
+        return;
+    }
+
+    vector<WordScrambleData> dataEntries;
+    string line;
+
+    while (getline(inFile, line))
+    {
+        stringstream ss(line);
+        WordScrambleData data;
+        string userIdStr, levelStr, scoreStr, coinStr;
+
+        getline(ss, userIdStr, ',');
+        getline(ss, data.Timestamp, ',');
+        getline(ss, data.modifyingTimestamp, ',');
+        getline(ss, data.name, ',');
+        getline(ss, levelStr, ',');
+        getline(ss, scoreStr, ',');
+        getline(ss, coinStr, ',');
+
+        data.UserId = stoi(userIdStr);
+        data.level = stoi(levelStr);
+        data.score = stoi(scoreStr);
+        data.coin = stoi(coinStr);
+
+        if (data.UserId == userId)
+        {
+            data.name = newName;
+            data.modifyingTimestamp = getTime();
+        }
+
+        dataEntries.push_back(data);
+    }
+    inFile.close();
+
+    ofstream outFile(WordScramble);
+    if (!outFile.is_open())
+    {
+        cerr << "Failed to open the file for writing." << endl;
+        return;
+    }
+
+    for (const auto &entry : dataEntries)
+    {
+        outFile << entry.UserId << ","
+                << entry.Timestamp << ","
+                << entry.modifyingTimestamp << ","
+                << entry.name << ","
+                << entry.level << ","
+                << entry.score << ","
+                << entry.coin << endl;
+    }
+    outFile.close();
+}
+
 // Get Data
 vector<WordScrambleData> getWordScrambleData()
 {
