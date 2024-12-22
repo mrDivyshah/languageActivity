@@ -310,7 +310,7 @@ void addDataToFiles(int rows, int columns)
     for (int i = 0; i < hintCount; ++i)
     {
         string hint;
-        moveCursorToPosition(columns - 13, add_ji);
+        moveCursorToPosition(columns - 13, add_ji++);
         cout << "Enter hint " << i + 1 << ": ";
         getline(cin, hint);
         newWord.hints.push_back(hint);
@@ -318,13 +318,15 @@ void addDataToFiles(int rows, int columns)
 
     if (addNewWord(newWord))
     {
-        moveCursorToPosition(columns - 35, add_ji + 1);
-        cout << "Word and hints added successfully!" << endl;
+        moveCursorToPosition(columns - 43, add_ji + 1);
+        cout << "Word " << Color_Blue << "'" << newWord.word << "'" << Color_Reset << "' and hints added successfully!" << endl;
+        _getch();
     }
     else
     {
         moveCursorToPosition(columns - 30, add_ji + 1);
         cout << "Failed to add word and hints." << endl;
+        _getch();
     }
 }
 
@@ -344,6 +346,7 @@ void adminPanel()
             cout << "\n";
             vector<DISPLAYUSER> A_users = fetchAllUserData();
             displayUserData(A_users);
+            _getch();
         }
         else if (choice == 2)
         {
@@ -368,11 +371,13 @@ void adminPanel()
                 cout << Color_Red << "User not found.\n"
                      << Color_Reset;
             }
+            _getch();
         }
         else if (choice == 4)
         {
             cout << "\n\n";
             displayDataAsTable(getWordScrambleData());
+            _getch();
         }
         else if (choice == 5)
         {
@@ -401,7 +406,11 @@ void adminPanel()
                 cout << "+-------------------------------------------------------------+" << Color_Reset;
                 string searcWord;
                 moveCursorToPosition((columns - 32) / 2, rows - 4);
-                cin >> searcWord;
+                getline(cin, searcWord);
+                if (searcWord.empty())
+                {
+                    break;
+                }
                 while (1)
                 {
                     int ans = searchWordAndPrint(dataMap, searcWord);

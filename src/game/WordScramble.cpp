@@ -56,16 +56,7 @@ map<int, vector<pair<string, vector<string>>>> parseFiles()
     }
     hintsInput.close();
 
-    // Debug: Print loaded hints
-    // for (const auto &hintEntry : hints) {
-    //     cout << "Hint ID: " << hintEntry.first << " | Hints: ";
-    //     for (const string &hint : hintEntry.second) {
-    //         cout << "\"" << hint << "\" ";
-    //     }
-    //     cout << endl;
-    // }
 
-    // Read words from the file
     ifstream wordsInput(WordsFile);
     if (!wordsInput)
     {
@@ -121,28 +112,23 @@ map<int, vector<pair<string, vector<string>>>> parseFiles()
 map<int, vector<tuple<int, string, vector<string>>>> parseFileswithId()
 {
     map<int, vector<tuple<int, string, vector<string>>>> dataMap;
-
-    // Read hints from the file
     ifstream hintsInput(HintsFile);
     if (!hintsInput)
     {
         cerr << "Error: Unable to open hints file: " << HintsFile << endl;
         return dataMap;
     }
-
     string line;
     map<int, vector<string>> hints;
     while (getline(hintsInput, line))
     {
         istringstream iss(line);
         string idStr, hint;
-
-        // Read ID and hint
         if (getline(iss, idStr, ',') && getline(iss, hint, ','))
         {
             int id = stoi(idStr);
             hint.erase(0, hint.find_first_not_of(" \""));
-            hint.erase(hint.find_last_not_of(" \"") + 1); // Trim quotes and spaces
+            hint.erase(hint.find_last_not_of(" \"") + 1); 
             hints[id].push_back(hint);
         }
         else
@@ -151,32 +137,26 @@ map<int, vector<tuple<int, string, vector<string>>>> parseFileswithId()
         }
     }
     hintsInput.close();
-
-    // Read words from the file
     ifstream wordsInput(WordsFile);
     if (!wordsInput)
     {
         cerr << "Error: Unable to open words file: " << WordsFile << endl;
         return dataMap;
     }
-
     while (getline(wordsInput, line))
     {
         istringstream iss(line);
         string idStr, word, levelStr;
-
-        // Read ID, word, and level
         if (getline(iss, idStr, ',') && getline(iss, word, ',') && getline(iss, levelStr, ','))
         {
             int id = stoi(idStr);
             int level = stoi(levelStr);
 
             word.erase(0, word.find_first_not_of(" \""));
-            word.erase(word.find_last_not_of(" \"") + 1); // Trim quotes and spaces
+            word.erase(word.find_last_not_of(" \"") + 1); 
 
             if (hints.find(id) != hints.end())
             {
-                // Add the word ID, word, and hints into the dataMap
                 dataMap[level].push_back(make_tuple(id, word, hints[id]));
             }
             else
@@ -376,142 +356,88 @@ int getLastWordId()
     return lastId;
 }
 
-bool addNewWord(const WordDetails &wordDetails)
-{
-    // Append new word to the words file
+bool addNewWord(const WordDetails &wordDetails) {
     ofstream wordsOutput(WordsFile, ios::app);
-    if (!wordsOutput)
-    {
+    if (!wordsOutput)     {
         cerr << "Error: Unable to open words file for writing: " << WordsFile << endl;
         return false;
     }
-
     wordsOutput << wordDetails.id << ", \"" << wordDetails.word << "\", " << wordDetails.level << "\n";
     wordsOutput.close();
-
-    // Append hints to the hints file
     ofstream hintsOutput(HintsFile, ios::app);
-    if (!hintsOutput)
-    {
+    if (!hintsOutput)     {
         cerr << "Error: Unable to open hints file for writing: " << HintsFile << endl;
         return false;
     }
-
-    for (const auto &hint : wordDetails.hints)
-    {
+    for (const auto &hint : wordDetails.hints)     {
         hintsOutput << wordDetails.id << ", \"" << hint << "\"\n";
     }
     hintsOutput.close();
-
     return true;
 }
 
-void updateFilesWithId(int wordId, const string &newWord, const vector<string> &newHints, int newLevel)
-{
-    // Read hints data
+void updateFilesWithId(int wordId, const string &newWord, const vector<string> &newHints, int newLevel) {
     map<int, vector<string>> hints;
     ifstream hintsInput(HintsFile);
-    if (!hintsInput)
-    {
+    if (!hintsInput)     {
         cerr << "Error: Unable to open hints file: " << HintsFile << endl;
         return;
     }
-
     string line;
-    while (getline(hintsInput, line))
-    {
+    while (getline(hintsInput, line))     {
         istringstream iss(line);
         string idStr, hint;
-
-        // Read ID and hint
-        if (getline(iss, idStr, ',') && getline(iss, hint, ','))
-        {
+        if (getline(iss, idStr, ',') && getline(iss, hint, ','))  {
             int id = stoi(idStr);
             hint.erase(0, hint.find_first_not_of(" \""));
-            hint.erase(hint.find_last_not_of(" \"") + 1); // Trim quotes and spaces
+            hint.erase(hint.find_last_not_of(" \"") + 1);
             hints[id].push_back(hint);
-        }
-        else
-        {
+        }else {
             cerr << "Error parsing hint line: " << line << endl;
-        }
-    }
+        }   }
     hintsInput.close();
-
-    // Read words data
     map<int, pair<string, int>> words;
     ifstream wordsInput(WordsFile);
-    if (!wordsInput)
-    {
+    if (!wordsInput) {
         cerr << "Error: Unable to open words file: " << WordsFile << endl;
         return;
     }
-
-    while (getline(wordsInput, line))
-    {
+    while (getline(wordsInput, line)) {
         istringstream iss(line);
         string idStr, word, levelStr;
-
-        // Read ID, word, and level
-        if (getline(iss, idStr, ',') && getline(iss, word, ',') && getline(iss, levelStr, ','))
-        {
+        if (getline(iss, idStr, ',') && getline(iss, word, ',') && getline(iss, levelStr, ',')) {
             int id = stoi(idStr);
             int level = stoi(levelStr);
-
             word.erase(0, word.find_first_not_of(" \""));
-            word.erase(word.find_last_not_of(" \"") + 1); // Trim quotes and spaces
-
+            word.erase(word.find_last_not_of(" \"") + 1); 
             words[id] = make_pair(word, level);
-        }
-        else
-        {
+        } else {
             cerr << "Error parsing word line: " << line << endl;
-        }
-    }
+        }     }
     wordsInput.close();
-
-    // Update data
-    if (hints.find(wordId) != hints.end() && words.find(wordId) != words.end())
-    {
-        // Update hints
+    if (hints.find(wordId) != hints.end() && words.find(wordId) != words.end()) {
         hints[wordId] = newHints;
-
-        // Update word and level
         words[wordId] = make_pair(newWord, newLevel);
-    }
-    else
-    {
+    } else {
         cerr << "Error: Word ID not found in both files: " << wordId << endl;
         return;
     }
-
-    // Write updated hints to file
     ofstream hintsOutput(HintsFile);
-    if (!hintsOutput)
-    {
+    if (!hintsOutput) {
         cerr << "Error: Unable to open hints file for writing: " << HintsFile << endl;
         return;
     }
-
-    for (map<int, vector<string>>::iterator it = hints.begin(); it != hints.end(); ++it)
-    {
-        for (const string &hint : it->second)
-        {
+    for (map<int, vector<string>>::iterator it = hints.begin(); it != hints.end(); ++it) {
+        for (const string &hint : it->second) {
             hintsOutput << it->first << ",\"" << hint << "\"" << endl;
-        }
-    }
+        }     }
     hintsOutput.close();
-
-    // Write updated words to file
     ofstream wordsOutput(WordsFile);
-    if (!wordsOutput)
-    {
+    if (!wordsOutput) {
         cerr << "Error: Unable to open words file for writing: " << WordsFile << endl;
         return;
     }
-
-    for (map<int, pair<string, int>>::iterator it = words.begin(); it != words.end(); ++it)
-    {
+    for (map<int, pair<string, int>>::iterator it = words.begin(); it != words.end(); ++it) {
         wordsOutput << it->first << ",\"" << it->second.first << "\"," << it->second.second << endl;
     }
     wordsOutput.close();
@@ -760,99 +686,67 @@ int searchWordAndPrint(const map<int, vector<tuple<int, string, vector<string>>>
 
 string deleteWordById(int wordId)
 {
-    // Temporary containers for updated data
     map<int, vector<string>> updatedHints;
     vector<string> updatedWords;
-    string deletedWord; // To store the deleted word
-
-    // Read and update hints file
+    string deletedWord; 
     ifstream hintsInput(HintsFile);
-    if (!hintsInput)
-    {
+    if (!hintsInput) {
         cerr << "Error: Unable to open hints file: " << HintsFile << endl;
         return "";
     }
-
     string line;
-    while (getline(hintsInput, line))
-    {
+    while (getline(hintsInput, line)) {
         istringstream iss(line);
         string idStr, hint;
-
-        // Read ID and hint
-        if (getline(iss, idStr, ',') && getline(iss, hint, ','))
-        {
+        if (getline(iss, idStr, ',') && getline(iss, hint, ',')) {
             int id = stoi(idStr);
-            if (id != wordId)
-            {
+            if (id != wordId) {
                 hint.erase(0, hint.find_first_not_of(" \""));
-                hint.erase(hint.find_last_not_of(" \"") + 1); // Trim quotes and spaces
+                hint.erase(hint.find_last_not_of(" \"") + 1); 
                 updatedHints[id].push_back(hint);
             }
-        }
-    }
+        }     }
     hintsInput.close();
-
-    // Write updated hints back to file
     ofstream hintsOutput(HintsFile);
-    if (!hintsOutput)
-    {
+    if (!hintsOutput){
         cerr << "Error: Unable to write to hints file: " << HintsFile << endl;
         return "";
     }
-    for (const auto &entry : updatedHints)
-    {
-        for (const auto &hint : entry.second)
-        {
+    for (const auto &entry : updatedHints) {
+        for (const auto &hint : entry.second) {
             hintsOutput << entry.first << ", " << hint << endl;
         }
     }
     hintsOutput.close();
-
-    // Read and update words file
     ifstream wordsInput(WordsFile);
-    if (!wordsInput)
-    {
+    if (!wordsInput) {
         cerr << "Error: Unable to open words file: " << WordsFile << endl;
         return "";
     }
-
-    while (getline(wordsInput, line))
-    {
+    while (getline(wordsInput, line)) {
         istringstream iss(line);
         string idStr, word, levelStr;
-
-        // Read ID, word, and level
         if (getline(iss, idStr, ',') && getline(iss, word, ',') && getline(iss, levelStr, ','))
         {
             int id = stoi(idStr);
-            if (id != wordId)
-            {
-                updatedWords.push_back(line); // Keep the line as is for writing back
-            }
-            else
-            {
+            if (id != wordId) {
+                updatedWords.push_back(line); 
+            } else {
                 word.erase(0, word.find_first_not_of(" \""));
-                word.erase(word.find_last_not_of(" \"") + 1); // Trim quotes and spaces
-                deletedWord = word;                           // Store the deleted word
+                word.erase(word.find_last_not_of(" \"") + 1); 
+                deletedWord = word;                           
             }
-        }
-    }
+        }     }
     wordsInput.close();
-
-    // Write updated words back to file
     ofstream wordsOutput(WordsFile);
-    if (!wordsOutput)
-    {
+    if (!wordsOutput) {
         cerr << "Error: Unable to write to words file: " << WordsFile << endl;
         return "";
     }
-    for (const auto &entry : updatedWords)
-    {
+    for (const auto &entry : updatedWords) {
         wordsOutput << entry << endl;
     }
     wordsOutput.close();
-
     return deletedWord;
 }
 

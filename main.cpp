@@ -548,6 +548,7 @@ void Home(int rows, int columns, User userData)
             if (option.selected == gameListSize)
             {
                 ManageUserDataMenu(rows, columns, userData);
+                clearLines(G_rows-30,G_rows-5);
             }
             else if (option.selected == gameListSize + 1)
             {
@@ -798,7 +799,6 @@ string stageArrayToString(int stage[])
 void wordScramble(User userData, int rows, int columns)
 {
     map<int, vector<pair<string, vector<string>>>> words = parseFiles();
-    _getch();
     srand(static_cast<unsigned int>(time(0)));
     int mrows = rows;
     WordScrambleData WordScrambleUserData = getSingleUserWordScrambleData(userData.id, userData.name);
