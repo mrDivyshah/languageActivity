@@ -79,7 +79,6 @@ int main()
     cout << "Hello! Get ready to play and improve your language skills!";
     cout << Color_Reset;
     system("cls");
-    adminPanel();
     userData = LoginUser(((columns - 40) / 2), (columns > 125 && rows > 35) ? 18 : 8);
     if (userData.id == -2)
     {
